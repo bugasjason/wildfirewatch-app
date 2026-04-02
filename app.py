@@ -139,6 +139,22 @@ if 'lat' not in predictions.columns:
     predictions['lat'] = predictions['hex_id'].apply(lambda h: h3.cell_to_latlng(h)[0])
     predictions['lon'] = predictions['hex_id'].apply(lambda h: h3.cell_to_latlng(h)[1])
 
+# Filter ocean hexagons using a piecewise-linear California coastline mask.
+# Points are (lat, westernmost valid longitude) ordered south→north for np.interp.
+_COAST = [
+    (32.5, -117.3), (33.0, -117.5), (33.5, -117.8), (34.0, -119.7),
+    (34.5, -120.6), (35.0, -120.9), (35.5, -121.2), (36.0, -121.9),
+    (36.5, -122.0), (37.0, -122.2), (37.5, -122.5), (37.8, -122.6),
+    (38.2, -122.9), (38.5, -123.1), (39.0, -123.8), (39.5, -123.9),
+    (40.0, -124.4), (40.5, -124.4), (41.0, -124.3), (41.5, -124.1),
+    (42.0, -124.2),
+]
+_coast_lats = [p[0] for p in _COAST]
+_coast_lons = [p[1] for p in _COAST]
+predictions = predictions[
+    predictions['lon'] >= np.interp(predictions['lat'], _coast_lats, _coast_lons)
+].copy()
+
 # ── HEADER + METRICS ──
 st.markdown(f'<div class="app-header"><p class="app-title">WildfireWatch AI</p><p class="app-subtitle">14-Day Wildfire Risk Forecast · California · {forecast_date}</p></div>', unsafe_allow_html=True)
 
