@@ -74,6 +74,13 @@ def get_available_dates():
     return ['current']
 
 @st.cache_data
+def load_ca_base():
+    """Load the full California hexagon coverage (all res-5 cells within state boundary)."""
+    with open('ca_hexagons.json') as f:
+        hex_ids = json.load(f)
+    return pd.DataFrame({'hex_id': hex_ids})
+
+@st.cache_data
 def load_data(date_key='current'):
     base = '.' if date_key == 'current' else f'snapshots/{date_key}'
     predictions = pd.read_csv(f'{base}/predictions_with_risk.csv')
@@ -133,27 +140,26 @@ with st.sidebar:
     st.caption("Model: LightGBM · ROC-AUC 0.892")
 
 # Post-load processing (runs after sidebar loads data)
-predictions['color'] = predictions['risk_level'].apply(risk_to_color)
 if 'lat' not in predictions.columns:
     import h3
     predictions['lat'] = predictions['hex_id'].apply(lambda h: h3.cell_to_latlng(h)[0])
     predictions['lon'] = predictions['hex_id'].apply(lambda h: h3.cell_to_latlng(h)[1])
 
-# Filter ocean hexagons using a piecewise-linear California coastline mask.
-# Points are (lat, westernmost valid longitude) ordered south→north for np.interp.
-_COAST = [
-    (32.5, -117.3), (33.0, -117.5), (33.5, -117.8), (34.0, -119.7),
-    (34.5, -120.6), (35.0, -120.9), (35.5, -121.2), (36.0, -121.9),
-    (36.5, -122.0), (37.0, -122.2), (37.5, -122.5), (37.8, -122.6),
-    (38.2, -122.9), (38.5, -123.1), (39.0, -123.8), (39.5, -123.9),
-    (40.0, -124.4), (40.5, -124.4), (41.0, -124.3), (41.5, -124.1),
-    (42.0, -124.2),
-]
-_coast_lats = [p[0] for p in _COAST]
-_coast_lons = [p[1] for p in _COAST]
-predictions = predictions[
-    predictions['lon'] >= np.interp(predictions['lat'], _coast_lats, _coast_lons)
-].copy()
+# Build full-state coverage: merge CA base hexagons with predictions.
+# Hexagons in the base but missing from predictions get a neutral "no data" style.
+ca_base = load_ca_base()
+map_data = ca_base.merge(
+    predictions[['hex_id', 'fire_probability', 'risk_level', 'top_3_drivers']],
+    on='hex_id', how='left'
+)
+map_data['risk_level'] = map_data['risk_level'].fillna('NO_DATA')
+map_data['fire_probability'] = map_data['fire_probability'].fillna(0.0)
+map_data['top_3_drivers'] = map_data['top_3_drivers'].fillna('')
+map_data['color'] = map_data['risk_level'].apply(
+    lambda lvl: [30, 35, 45, 35] if lvl == 'NO_DATA' else risk_to_color(lvl)
+)
+# predictions keeps its ocean-free rows for metric counts; map_data drives the map
+predictions['color'] = predictions['risk_level'].apply(risk_to_color)
 
 # ── HEADER + METRICS ──
 st.markdown(f'<div class="app-header"><p class="app-title">WildfireWatch AI</p><p class="app-subtitle">14-Day Wildfire Risk Forecast · California · {forecast_date}</p></div>', unsafe_allow_html=True)
@@ -175,8 +181,14 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ── MAP ──
-filtered = predictions[predictions['risk_level'].isin(show_levels)]
-
+# Base layer: full California shape, very dim, always shown
+base_layer = pdk.Layer(
+    "H3HexagonLayer", data=map_data[map_data['risk_level'] == 'NO_DATA'],
+    get_hexagon="hex_id", get_fill_color="color",
+    opacity=0.6, pickable=False, auto_highlight=False,
+)
+# Risk layer: only selected risk levels from actual predictions
+filtered = map_data[map_data['risk_level'].isin(show_levels)]
 hex_layer = pdk.Layer(
     "H3HexagonLayer", data=filtered, get_hexagon="hex_id", get_fill_color="color",
     get_elevation="fire_probability" if elevation_3d else None,
@@ -196,7 +208,7 @@ st.markdown('<div class="legend"><div class="legend-item"><div class="legend-dot
 CARTO_DARK = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
 
 st.pydeck_chart(
-    pdk.Deck(layers=[hex_layer], initial_view_state=view, tooltip=tooltip, map_style=CARTO_DARK),
+    pdk.Deck(layers=[base_layer, hex_layer], initial_view_state=view, tooltip=tooltip, map_style=CARTO_DARK),
     use_container_width=True, height=550,
 )
 
