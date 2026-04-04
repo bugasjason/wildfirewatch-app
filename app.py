@@ -19,11 +19,11 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
     .block-container { padding-top: 1rem; padding-bottom: 1rem; }
     html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
-    .app-header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 1.1rem 1.5rem; border-radius: 12px; margin-bottom: 0.8rem; }
+    .app-header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 1.1rem 1.5rem; border-radius: 12px; margin-bottom: 0.4rem; }
     .app-title { color: #fff; font-size: 1.5rem; font-weight: 700; margin: 0; }
     .app-subtitle { color: rgba(255,255,255,0.55); font-size: 0.82rem; margin: 0; }
     .metric-row { display: flex; gap: 10px; margin-bottom: 0.8rem; }
-    .metric-card { flex: 1; padding: 12px 14px; border-radius: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.06); }
+    .metric-card { flex: 1; padding: 16px 14px; border-radius: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.06); }
     .metric-card .label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
     .metric-card .value { font-size: 1.7rem; font-weight: 700; line-height: 1.1; }
     .mc-red { background: #2a0f11; } .mc-red .label { color: #f87171; } .mc-red .value { color: #fca5a5; }
@@ -49,13 +49,15 @@ st.markdown("""
     .bc-body { font-size: 0.83rem; line-height: 1.55; color: #d1d5db; margin-bottom: 8px; }
     .bc-act { font-size: 0.8rem; color: #9ca3af; padding: 2px 0 2px 18px; position: relative; }
     .bc-act::before { content: "→"; position: absolute; left: 0; color: #555; }
-    .overall { background: #111827; border: 1px solid #1e3a5f; border-radius: 10px; padding: 12px 16px; margin-bottom: 0.8rem; }
+    .overall { background: #111827; border-left: 4px solid #38bdf8; border-radius: 0 10px 10px 0; padding: 12px 16px; margin-bottom: 0.8rem; }
     .overall p { color: #c8d0dc; font-size: 0.85rem; line-height: 1.5; margin: 0; }
     .overall strong { color: #e2e8f0; }
     .legend { display: flex; gap: 16px; justify-content: center; padding: 6px 0; margin-bottom: 4px; }
     .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; color: #9ca3af; }
     .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
-    #MainMenu {visibility: hidden;} footer {visibility: hidden;}
+    #MainMenu {display: none;} footer {display: none;} [data-testid="stToolbar"] {display: none;}
+    .block-container h4 { font-size: 1.15rem !important; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 0.6rem; }
+    div[data-testid="stButton"] > button { border-radius: 8px !important; }
     [data-testid="stSidebar"] { background: #0d1117; }
     [data-testid="collapsedControl"], [data-testid="stSidebarCollapsedControl"] { display: none !important; }
     section[data-testid="stSidebar"] { min-width: 280px !important; }
@@ -96,15 +98,15 @@ def risk_to_color(level):
     return {
         'VERY_HIGH': [239, 68, 68, 230],
         'HIGH':      [249, 115, 22, 200],
-        'MODERATE':  [234, 179, 8, 100],
-        'LOW':       [55, 120, 80, 25],
+        'MODERATE':  [234, 159, 8, 110],
+        'LOW':       [55, 120, 80, 15],
         'NO_RISK':   [80, 80, 80, 15],
     }.get(level, [80, 80, 80, 15])
 
 # ── SIDEBAR ──
 with st.sidebar:
     st.markdown("### 🔥 WildfireWatch AI")
-    st.caption("14-Day Wildfire Risk Forecast")
+    st.caption("10–21 Day Wildfire Risk Forecast")
     st.divider()
 
     if len(available_dates) > 1:
@@ -129,15 +131,15 @@ with st.sidebar:
     st.markdown(f"**Hexagons:** {len(predictions):,}")
     st.markdown(f"**Active clusters:** {len(clusters)}")
     st.divider()
-    show_levels = st.multiselect("Risk levels on map", ['VERY_HIGH','HIGH','MODERATE','LOW','NO_RISK'], default=['VERY_HIGH','HIGH','MODERATE'])
+    show_levels = st.multiselect("Risk levels on map", ['VERY_HIGH','HIGH','MODERATE','LOW','NO_RISK'], default=['VERY_HIGH','HIGH'])
     map_opacity = st.slider("Opacity", 0.3, 1.0, 0.8, 0.05)
     elevation_3d = st.checkbox("3D elevation", value=False)
     st.divider()
-    groq_key = st.text_input("Groq API Key", type="password", help="For live chatbot")
-    if groq_key: st.success("Key set", icon="✅")
-    st.divider()
     st.caption("Deloitte Capstone · May 2025")
     st.caption("Model: LightGBM · ROC-AUC 0.892")
+    st.divider()
+    groq_key = st.text_input("Groq API Key", type="password", help="For live chatbot")
+    if groq_key: st.success("Key set", icon="✅")
 
 # Post-load processing (runs after sidebar loads data)
 if 'lat' not in predictions.columns:
@@ -162,7 +164,7 @@ map_data['color'] = map_data['risk_level'].apply(
 predictions['color'] = predictions['risk_level'].apply(risk_to_color)
 
 # ── HEADER + METRICS ──
-st.markdown(f'<div class="app-header"><p class="app-title">WildfireWatch AI</p><p class="app-subtitle">14-Day Wildfire Risk Forecast · California · {forecast_date}</p></div>', unsafe_allow_html=True)
+st.markdown(f'<div class="app-header"><p class="app-title">WildfireWatch AI</p><p class="app-subtitle">10–21 Day Wildfire Risk Forecast · California · {forecast_date}</p></div>', unsafe_allow_html=True)
 
 n_vh = int((predictions['risk_level']=='VERY_HIGH').sum())
 n_h  = int((predictions['risk_level']=='HIGH').sum())
@@ -181,14 +183,15 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ── MAP ──
-# Base layer: full California shape, very dim, always shown
+# Base layer: full California silhouette, always shown
 base_layer = pdk.Layer(
     "H3HexagonLayer", data=map_data[map_data['risk_level'] == 'NO_DATA'],
     get_hexagon="hex_id", get_fill_color="color",
     opacity=0.6, pickable=False, auto_highlight=False,
 )
-# Risk layer: only selected risk levels from actual predictions
-filtered = map_data[map_data['risk_level'].isin(show_levels)]
+# Risk layer: selected risk levels only — NO_RISK excluded entirely from map
+_renderable = [l for l in show_levels if l != 'NO_RISK']
+filtered = map_data[map_data['risk_level'].isin(_renderable)]
 hex_layer = pdk.Layer(
     "H3HexagonLayer", data=filtered, get_hexagon="hex_id", get_fill_color="color",
     get_elevation="fire_probability" if elevation_3d else None,
@@ -196,21 +199,20 @@ hex_layer = pdk.Layer(
     opacity=map_opacity, pickable=True, auto_highlight=True,
 )
 
-view = pdk.ViewState(latitude=36.8, longitude=-120.5, zoom=6.5, pitch=40 if elevation_3d else 0, bearing=0)
+view = pdk.ViewState(latitude=37.5, longitude=-119.8, zoom=5.8, pitch=0, bearing=0)
 
 tooltip = {
     "html": '<div style="font-family:DM Sans,sans-serif;padding:10px;min-width:200px;"><div style="font-weight:600;margin-bottom:6px;">{hex_id}</div><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:#aaa;font-size:12px;">Risk</span><span style="font-weight:600;font-size:12px;">{risk_level}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:#aaa;font-size:12px;">Probability</span><span style="font-size:12px;">{fire_probability}</span></div><div style="display:flex;justify-content:space-between;"><span style="color:#aaa;font-size:12px;">Drivers</span><span style="font-size:11px;text-align:right;max-width:150px;">{top_3_drivers}</span></div></div>',
     "style": {"backgroundColor": "#111827", "color": "#e5e7eb", "borderRadius": "8px"}
 }
 
-st.markdown('<div class="legend"><div class="legend-item"><div class="legend-dot" style="background:#ef4444;"></div>Very high</div><div class="legend-item"><div class="legend-dot" style="background:#f97316;"></div>High</div><div class="legend-item"><div class="legend-dot" style="background:#eab308;opacity:0.6;"></div>Moderate</div><div class="legend-item"><div class="legend-dot" style="background:#377850;opacity:0.4;"></div>Low</div><div class="legend-item"><div class="legend-dot" style="background:#505050;opacity:0.4;"></div>No risk</div></div>', unsafe_allow_html=True)
-
 CARTO_DARK = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
 
 st.pydeck_chart(
     pdk.Deck(layers=[base_layer, hex_layer], initial_view_state=view, tooltip=tooltip, map_style=CARTO_DARK),
-    use_container_width=True, height=550,
+    use_container_width=True, height=600,
 )
+st.markdown('<div class="legend"><div class="legend-item"><div class="legend-dot" style="background:#ef4444;"></div>Very high</div><div class="legend-item"><div class="legend-dot" style="background:#f97316;"></div>High</div><div class="legend-item"><div class="legend-dot" style="background:#ea9f08;opacity:0.8;"></div>Moderate</div><div class="legend-item"><div class="legend-dot" style="background:#377850;opacity:0.4;"></div>Low</div><div class="legend-item"><div class="legend-dot" style="background:#1e2330;opacity:0.8;"></div>No data</div></div>', unsafe_allow_html=True)
 
 # ── OVERALL ──
 overall = briefing.get('overall_assessment', '')
@@ -235,12 +237,14 @@ with brief_col:
         border_color = '#ef4444' if level == 'VERY_HIGH' else '#f97316'
         bg_color = '#1f1012' if level == 'VERY_HIGH' else '#1f160e'
         head_color = '#fca5a5' if level == 'VERY_HIGH' else '#fdba74'
-        expander_label = f"{icon} Cluster {label} — {region} ({level})"
+        hex_count = cb.get('hex_count', None)
+        hex_tag = f" · {hex_count} hexagons" if hex_count else ""
+        expander_label = f"{icon} Cluster {label} — {region} ({level}){hex_tag}"
         with st.expander(expander_label, expanded=False):
             st.markdown(
                 f'<div style="border-left:4px solid {border_color};background:{bg_color};border-radius:0 8px 8px 0;padding:10px 14px;margin:-8px -12px 8px -12px;">'
-                f'<div style="font-size:0.83rem;line-height:1.55;color:#d1d5db;margin-bottom:8px;">{summary}</div>'
-                + ''.join(f'<div style="font-size:0.8rem;color:#9ca3af;padding:2px 0 2px 18px;position:relative;"><span style="position:absolute;left:0;color:#555;">→</span>{a}</div>' for a in actions)
+                f'<div style="font-size:0.83rem;line-height:1.55;color:#d1d5db;margin-bottom:10px;">{summary}</div>'
+                + ''.join(f'<div style="font-size:0.8rem;color:#9ca3af;padding:5px 0 5px 20px;position:relative;line-height:1.5;"><span style="position:absolute;left:0;color:#555;">→</span>{a}</div>' for a in actions)
                 + '</div>',
                 unsafe_allow_html=True
             )
@@ -255,8 +259,8 @@ with chat_col:
     st.markdown("#### Ask WildfireWatch")
     st.caption("Live Q&A grounded in predictions + emergency mgmt docs")
     if "messages" not in st.session_state:
-        st.session_state.messages = [{"role": "assistant", "content": "I'm the WildfireWatch AI assistant. I have access to today's risk predictions, SHAP model explanations, and emergency management reference docs.\n\nAsk me about specific clusters, evacuation planning, resource positioning, or what's driving the risk in any region."}]
-    chat_container = st.container(height=400)
+        st.session_state.messages = [{"role": "assistant", "content": "Ask me about any cluster, region, or recommended action."}]
+    chat_container = st.container(height=450)
     with chat_container:
         for msg in st.session_state.messages:
             with st.chat_message(msg["role"]): st.markdown(msg["content"])
@@ -288,4 +292,8 @@ with chat_col:
 st.divider()
 with st.expander("View raw prediction data"):
     cols = [c for c in ['hex_id','fire_probability','risk_level','top_3_drivers'] if c in predictions.columns]
-    st.dataframe(predictions.nlargest(20, 'fire_probability')[cols], use_container_width=True, hide_index=True)
+    display_df = predictions.nlargest(10, 'fire_probability')[cols].copy()
+    if 'fire_probability' in display_df.columns:
+        display_df['fire_probability'] = (display_df['fire_probability'] * 100).round(1).astype(str) + '%'
+    st.dataframe(display_df, use_container_width=True, hide_index=True)
+st.caption("Powered by LightGBM · Groq · Streamlit")
