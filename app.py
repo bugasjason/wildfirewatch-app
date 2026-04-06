@@ -10,6 +10,7 @@ import numpy as np
 import pydeck as pdk
 import json
 import os
+from datetime import datetime
 from groq import Groq
 
 st.set_page_config(page_title="WildfireWatch AI", page_icon="🔥", layout="wide", initial_sidebar_state="expanded")
@@ -64,16 +65,12 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-def get_available_dates():
-    """Return sorted list of snapshot date keys, falling back to ['current']."""
-    base = 'snapshots'
-    if os.path.isdir(base):
-        dates = sorted([d for d in os.listdir(base)
-                        if os.path.isdir(os.path.join(base, d))
-                        and os.path.exists(os.path.join(base, d, 'predictions_with_risk.csv'))])
-        if dates:
-            return dates
-    return ['current']
+SNAPSHOTS_DIR = 'date_snapshots'
+
+@st.cache_data
+def load_date_index():
+    with open(f'{SNAPSHOTS_DIR}/date_index.json') as f:
+        return json.load(f)
 
 @st.cache_data
 def load_ca_base():
@@ -83,16 +80,23 @@ def load_ca_base():
     return pd.DataFrame({'hex_id': hex_ids})
 
 @st.cache_data
-def load_data(date_key='current'):
-    base = '.' if date_key == 'current' else f'snapshots/{date_key}'
+def load_rag_context():
+    with open(f'{SNAPSHOTS_DIR}/rag_context.txt') as f:
+        return f.read()
+
+@st.cache_data
+def load_data(date_key):
+    base = f'{SNAPSHOTS_DIR}/{date_key}'
     predictions = pd.read_csv(f'{base}/predictions_with_risk.csv')
     with open(f'{base}/clusters.json') as f: clusters = json.load(f)
     with open(f'{base}/briefing.json') as f: briefing = json.load(f)
-    with open(f'{base}/rag_context.txt') as f: rag_context = f.read()
     with open(f'{base}/chatbot_context.txt') as f: chatbot_context = f.read()
-    return predictions, clusters, briefing, rag_context, chatbot_context
+    return predictions, clusters, briefing, chatbot_context
 
-available_dates = get_available_dates()
+def format_date_label(entry):
+    """Format index entry as 'Aug 14, 2025 — Peak fire season'."""
+    dt = datetime.strptime(entry['date'], '%Y-%m-%d')
+    return f"{dt.strftime('%b %-d, %Y')} \u2014 {entry['label']}"
 
 def risk_to_color(level):
     return {
@@ -103,24 +107,30 @@ def risk_to_color(level):
         'NO_RISK':   [80, 80, 80, 15],
     }.get(level, [80, 80, 80, 15])
 
+# Load index and shared RAG context once
+date_index = load_date_index()
+rag_context = load_rag_context()
+
+# Default to most dramatic date (2025-10-05 has highest n_very_high)
+_default_date = '2025-10-05'
+_default_idx = next((i for i, e in enumerate(date_index) if e['date'] == _default_date), len(date_index) - 1)
+
 # ── SIDEBAR ──
 with st.sidebar:
     st.markdown("### 🔥 WildfireWatch AI")
     st.caption("10–21 Day Wildfire Risk Forecast")
     st.divider()
 
-    if len(available_dates) > 1:
-        selected_date = st.selectbox(
-            "Forecast snapshot",
-            available_dates,
-            index=len(available_dates) - 1,
-            format_func=lambda d: d if d != 'current' else 'Current',
-        )
-    else:
-        selected_date = available_dates[0]
+    selected_entry = st.selectbox(
+        "Forecast snapshot",
+        date_index,
+        index=_default_idx,
+        format_func=format_date_label,
+    )
+    selected_date = selected_entry['date']
 
     try:
-        predictions, clusters, briefing, rag_context, chatbot_context = load_data(selected_date)
+        predictions, clusters, briefing, chatbot_context = load_data(selected_date)
     except FileNotFoundError as e:
         st.error(f"Missing file: {e.filename}")
         st.stop()
@@ -232,11 +242,8 @@ with brief_col:
         label = cb.get('label', '?')
         summary = cb.get('summary', '')
         actions = cb.get('actions', [])
-        # First sentence as collapsed preview
-        first_sentence = summary.split('.')[0].strip() + '.' if '.' in summary else summary
         border_color = '#ef4444' if level == 'VERY_HIGH' else '#f97316'
         bg_color = '#1f1012' if level == 'VERY_HIGH' else '#1f160e'
-        head_color = '#fca5a5' if level == 'VERY_HIGH' else '#fdba74'
         hex_count = cb.get('hex_count', None)
         hex_tag = f" · {hex_count} hexagons" if hex_count else ""
         expander_label = f"{icon} Cluster {label} — {region} ({level}){hex_tag}"
@@ -258,8 +265,10 @@ with brief_col:
 with chat_col:
     st.markdown("#### Ask WildfireWatch")
     st.caption("Live Q&A grounded in predictions + emergency mgmt docs")
-    if "messages" not in st.session_state:
+    # Reset chat when date changes so context stays accurate
+    if st.session_state.get('_chat_date') != selected_date:
         st.session_state.messages = [{"role": "assistant", "content": "Ask me about any cluster, region, or recommended action."}]
+        st.session_state['_chat_date'] = selected_date
     chat_container = st.container(height=450)
     with chat_container:
         for msg in st.session_state.messages:

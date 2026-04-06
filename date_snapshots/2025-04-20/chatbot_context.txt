@@ -1,0 +1,46 @@
+PREDICTIONS — 2025-04-20
+Hexagons: 1,309
+VERY_HIGH: 0 | HIGH: 43 | MODERATE: 261 | LOW: 507 | NO_RISK: 498
+Clusters: 7
+
+CLUSTER A: Southern Central Valley — HIGH
+  2 hexes | Prob: avg 0.1035, max 0.1094
+  Temp: 109.4°F | Wind: 10.0mph
+  NDVI: 0.125 | LST day: 43.5°C
+  Drivers: geographic location (historically fire-prone area), 7-day average daytime surface temperature (°C), 30-day average precipitation
+
+CLUSTER B: Sequoia National Forest — HIGH
+  6 hexes | Prob: avg 0.0997, max 0.1195
+  Temp: 103.8°F | Wind: 11.6mph
+  NDVI: 0.145 | LST day: 44.4°C
+  Drivers: geographic location (historically fire-prone area), 7-day average daytime surface temperature (°C), 30-day average precipitation
+
+CLUSTER C: Sequoia National Forest — HIGH
+  8 hexes | Prob: avg 0.0989, max 0.1118
+  Temp: 103.4°F | Wind: 11.3mph
+  NDVI: 0.129 | LST day: 45.5°C
+  Drivers: geographic location (historically fire-prone area), 7-day average daytime surface temperature (°C), 30-day average precipitation
+
+CLUSTER D: Sequoia National Forest — HIGH
+  4 hexes | Prob: avg 0.0983, max 0.1164
+  Temp: 99.9°F | Wind: 10.3mph
+  NDVI: 0.153 | LST day: 45.9°C
+  Drivers: geographic location (historically fire-prone area), cumulative 30-day precipitation deficit, sustained high temperatures over past 7 days
+
+CLUSTER E: Sequoia National Forest — HIGH
+  5 hexes | Prob: avg 0.0978, max 0.1158
+  Temp: 100.1°F | Wind: 11.7mph
+  NDVI: 0.141 | LST day: 45.1°C
+  Drivers: geographic location (historically fire-prone area), day of year (peak fire season timing), satellite daytime surface temperature (°C)
+
+CLUSTER F: San Gabriel Mountains — HIGH
+  4 hexes | Prob: avg 0.0888, max 0.0938
+  Temp: 102.3°F | Wind: 11.3mph
+  NDVI: 0.16 | LST day: 45.5°C
+  Drivers: geographic location (historically fire-prone area), cumulative 30-day precipitation deficit, sustained high temperatures over past 7 days
+
+CLUSTER G: San Bernardino Mountains — HIGH
+  3 hexes | Prob: avg 0.0864, max 0.089
+  Temp: 102.7°F | Wind: 7.1mph
+  NDVI: 0.164 | LST day: 48.0°C
+  Drivers: geographic location (historically fire-prone area), 7-day average daytime surface temperature (°C), 30-day average precipitation

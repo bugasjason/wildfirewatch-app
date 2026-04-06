@@ -1,0 +1,49 @@
+{
+  "clusters": [
+    {
+      "label": "A",
+      "region": "San Gabriel Mountains",
+      "risk_level": "VERY_HIGH",
+      "summary": "The San Gabriel Mountains are experiencing extreme fire conditions, with 37 hexagons at VERY_HIGH risk and an average probability of 31.52%. Temperatures are soaring at 104.6\u00b0F, and winds are gusting up to 49.9mph. This historically fire-prone area is particularly vulnerable, driven by geographic location, satellite daytime surface temperature, and 7-day average daytime surface temperature.",
+      "actions": [
+        "Deploy Type 1 engines within 15-min response time of high-risk areas.",
+        "Position aerial resources on standby at nearby air bases.",
+        "Activate CAL FIRE READY-SET-GO protocol for READY status, advising residents to create defensible space and prepare go-bags."
+      ]
+    },
+    {
+      "label": "B",
+      "region": "Shasta-Trinity Region",
+      "risk_level": "VERY_HIGH",
+      "summary": "The Shasta-Trinity Region is also facing extreme fire conditions, with 80 hexagons at VERY_HIGH or HIGH risk and an average probability of 19.06%. Temperatures are high at 104.0\u00b0F, and winds are gusting up to 49.9mph. This historically fire-prone area is driven by geographic location, satellite daytime surface temperature, and cumulative 30-day precipitation deficit.",
+      "actions": [
+        "Deploy Type 1 engines within 15-min response time of high-risk areas.",
+        "Position aerial resources on standby at nearby air bases.",
+        "Activate CAL FIRE READY-SET-GO protocol for READY status, advising residents to create defensible space and prepare go-bags."
+      ]
+    },
+    {
+      "label": "C",
+      "region": "Sequoia National Forest",
+      "risk_level": "HIGH",
+      "summary": "The Sequoia National Forest is experiencing elevated fire conditions, with 24 hexagons at HIGH risk and an average probability of 11.46%. Temperatures are high at 104.6\u00b0F, and winds are moderate at 9.7mph. This historically fire-prone area is driven by geographic location, cumulative 30-day precipitation deficit, and sustained high temperatures over past 7 days.",
+      "actions": [
+        "Deploy Type 2 engines within 30-min response time of high-risk areas.",
+        "Position water tenders at key highway corridors.",
+        "Activate CAL FIRE READY-SET-GO protocol for READY status, advising residents to create defensible space and prepare go-bags."
+      ]
+    },
+    {
+      "label": "D",
+      "region": "Lake Tahoe / El Dorado",
+      "risk_level": "HIGH",
+      "summary": "The Lake Tahoe / El Dorado area is experiencing elevated fire conditions, with 2 hexagons at HIGH risk and an average probability of 9.35%. Temperatures are extremely high at 107.3\u00b0F, and winds are moderate at 13.8mph. This historically fire-prone area is driven by day of year (peak fire season timing), satellite daytime surface temperature, and geographic location.",
+      "actions": [
+        "Deploy Type 2 engines within 30-min response time of high-risk areas.",
+        "Position water tenders at key highway corridors.",
+        "Activate CAL FIRE READY-SET-GO protocol for READY status, advising residents to create defensible space and prepare go-bags."
+      ]
+    }
+  ],
+  "overall_assessment": "California is experiencing extreme fire conditions statewide, with 94 hexagons at VERY_HIGH risk and 72 at HIGH risk. Temperatures are soaring, and winds are gusting, driven by geographic location, satellite daytime surface temperature, and other factors. Residents are advised to take proactive measures to prepare for potential evacuations."
+}

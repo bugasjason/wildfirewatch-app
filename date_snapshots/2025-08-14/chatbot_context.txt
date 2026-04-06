@@ -1,0 +1,28 @@
+PREDICTIONS — 2025-08-14
+Hexagons: 1,309
+VERY_HIGH: 94 | HIGH: 72 | MODERATE: 318 | LOW: 478 | NO_RISK: 347
+Clusters: 4
+
+CLUSTER A: San Gabriel Mountains — VERY_HIGH
+  37 hexes | Prob: avg 0.3152, max 0.4829
+  Temp: 104.6°F | Wind: 36.6mph
+  NDVI: 0.133 | LST day: 44.9°C
+  Drivers: geographic location (historically fire-prone area), satellite daytime surface temperature (°C), 7-day average daytime surface temperature (°C)
+
+CLUSTER B: Shasta-Trinity Region — VERY_HIGH
+  80 hexes | Prob: avg 0.1906, max 0.2996
+  Temp: 104.0°F | Wind: 25.8mph
+  NDVI: 0.154 | LST day: 44.9°C
+  Drivers: geographic location (historically fire-prone area), satellite daytime surface temperature (°C), cumulative 30-day precipitation deficit
+
+CLUSTER C: Sequoia National Forest — HIGH
+  24 hexes | Prob: avg 0.1146, max 0.1463
+  Temp: 104.6°F | Wind: 9.7mph
+  NDVI: 0.14 | LST day: 44.9°C
+  Drivers: geographic location (historically fire-prone area), cumulative 30-day precipitation deficit, sustained high temperatures over past 7 days
+
+CLUSTER D: Lake Tahoe / El Dorado — HIGH
+  2 hexes | Prob: avg 0.0935, max 0.0996
+  Temp: 107.3°F | Wind: 13.8mph
+  NDVI: 0.156 | LST day: 39.4°C
+  Drivers: day of year (peak fire season timing), satellite daytime surface temperature (°C), geographic location (historically fire-prone area)

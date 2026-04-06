@@ -1,0 +1,16 @@
+PREDICTIONS — 2025-12-01
+Hexagons: 1,309
+VERY_HIGH: 0 | HIGH: 12 | MODERATE: 146 | LOW: 446 | NO_RISK: 705
+Clusters: 2
+
+CLUSTER A: Riverside / San Jacinto — HIGH
+  3 hexes | Prob: avg 0.1294, max 0.1415
+  Temp: 102.0°F | Wind: 7.1mph
+  NDVI: 0.145 | LST day: 49.1°C
+  Drivers: geographic location (historically fire-prone area), 7-day average daytime surface temperature (°C), 30-day average precipitation
+
+CLUSTER B: San Bernardino Mountains — HIGH
+  8 hexes | Prob: avg 0.117, max 0.1475
+  Temp: 103.0°F | Wind: 10.3mph
+  NDVI: 0.153 | LST day: 44.7°C
+  Drivers: geographic location (historically fire-prone area), 7-day average daytime surface temperature (°C), 30-day average precipitation

@@ -1,0 +1,44 @@
+[
+  {
+    "date": "2025-01-15",
+    "label": "Winter \u2014 Low risk statewide",
+    "n_very_high": 0,
+    "n_high": 0,
+    "n_clusters": 0
+  },
+  {
+    "date": "2025-04-20",
+    "label": "Spring \u2014 Risk building",
+    "n_very_high": 0,
+    "n_high": 43,
+    "n_clusters": 7
+  },
+  {
+    "date": "2025-06-15",
+    "label": "Early summer \u2014 Moderate risk",
+    "n_very_high": 36,
+    "n_high": 127,
+    "n_clusters": 10
+  },
+  {
+    "date": "2025-08-14",
+    "label": "Peak fire season",
+    "n_very_high": 94,
+    "n_high": 72,
+    "n_clusters": 4
+  },
+  {
+    "date": "2025-10-05",
+    "label": "Santa Ana event \u2014 SoCal extreme",
+    "n_very_high": 143,
+    "n_high": 27,
+    "n_clusters": 4
+  },
+  {
+    "date": "2025-12-01",
+    "label": "Late fall \u2014 Risk declining",
+    "n_very_high": 0,
+    "n_high": 12,
+    "n_clusters": 2
+  }
+]

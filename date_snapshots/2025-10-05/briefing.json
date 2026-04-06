@@ -1,0 +1,49 @@
+{
+  "clusters": [
+    {
+      "label": "A",
+      "region": "San Bernardino Mountains",
+      "risk_level": "VERY_HIGH",
+      "summary": "The San Bernardino Mountains are experiencing extreme fire conditions with 152 hexagons at VERY_HIGH risk, driven by geographic location, satellite daytime surface temperature (44.8\u00b0C), and 7-day average daytime surface temperature (44.8\u00b0C). Temperatures are reaching 104.2\u00b0F, and wind gusts are up to 49.6mph, creating a high risk of rapid fire spread.",
+      "actions": [
+        "Deploy Type 1 engines within 15-min response time of high-risk areas.",
+        "Position aerial resources on standby at nearby air bases.",
+        "Activate CAL FIRE READY-SET-GO protocol to high-risk residents, advising them to prepare defensible space and go-bags."
+      ]
+    },
+    {
+      "label": "B",
+      "region": "Shasta-Trinity Region",
+      "risk_level": "HIGH",
+      "summary": "The Shasta-Trinity Region is experiencing elevated fire conditions with 3 hexagons at HIGH risk, driven by peak fire season timing, satellite daytime surface temperature (45.9\u00b0C), and geographic location. Temperatures are reaching 102.9\u00b0F, and drought conditions are severe.",
+      "actions": [
+        "Increase aerial resource presence in the area, with a focus on water bombing and retardant deployment.",
+        "Position Type 1 engines in strategic locations to respond quickly to emerging fires.",
+        "Activate CAL FIRE READY-SET-GO protocol to high-risk residents, advising them to prepare defensible space and go-bags."
+      ]
+    },
+    {
+      "label": "C",
+      "region": "Shasta-Trinity Region",
+      "risk_level": "HIGH",
+      "summary": "The Shasta-Trinity Region is experiencing elevated fire conditions with 3 hexagons at HIGH risk, driven by peak fire season timing, satellite daytime surface temperature (42.7\u00b0C), and geographic location. Temperatures are reaching 103.2\u00b0F, and drought conditions are severe.",
+      "actions": [
+        "Increase aerial resource presence in the area, with a focus on water bombing and retardant deployment.",
+        "Position Type 1 engines in strategic locations to respond quickly to emerging fires.",
+        "Activate CAL FIRE READY-SET-GO protocol to high-risk residents, advising them to prepare defensible space and go-bags."
+      ]
+    },
+    {
+      "label": "D",
+      "region": "Shasta-Trinity Region",
+      "risk_level": "HIGH",
+      "summary": "The Shasta-Trinity Region is experiencing elevated fire conditions with 4 hexagons at HIGH risk, driven by geographic location, 7-day average daytime surface temperature (47.2\u00b0C), and 30-day average precipitation. Temperatures are reaching 101.0\u00b0F, and drought conditions are moderate.",
+      "actions": [
+        "Position Type 1 engines in strategic locations to respond quickly to emerging fires.",
+        "Activate CAL FIRE READY-SET-GO protocol to high-risk residents, advising them to prepare defensible space and go-bags.",
+        "Increase water tender presence in the area, with a focus on rapid fire suppression."
+      ]
+    }
+  ],
+  "overall_assessment": "California is experiencing a significant increase in fire risk, with 143 hexagons at VERY_HIGH risk and 27 hexagons at HIGH risk. The San Bernardino Mountains are the most critical area, with extreme fire conditions and a high risk of rapid fire spread. CAL FIRE is activating READY-SET-GO protocols and deploying resources to high-risk areas to mitigate the risk of wildfires."
+}

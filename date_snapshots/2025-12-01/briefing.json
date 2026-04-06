@@ -1,0 +1,31 @@
+{
+  "clusters": [
+    {
+      "label": "A",
+      "region": "Riverside / San Jacinto",
+      "risk_level": "HIGH",
+      "summary": "Cluster A in Riverside / San Jacinto consists of 3 high-risk hexagons, with an average probability of 12.94% and a maximum probability of 14.15%. The area is experiencing extreme heat stress, with a 7-day average daytime surface temperature of 49.1\u00b0C and a drought index of 5.17. CAL FIRE is advising residents to be prepared for potential wildfires, with actions including: preparing defensible space, creating go-bags, and knowing evacuation routes.",
+      "actions": [
+        "Prepare defensible space",
+        "Create go-bags",
+        "Know evacuation routes",
+        "Monitor weather conditions",
+        "Increase aerial resources on standby"
+      ]
+    },
+    {
+      "label": "B",
+      "region": "San Bernardino Mountains",
+      "risk_level": "HIGH",
+      "summary": "Cluster B in the San Bernardino Mountains consists of 8 high-risk hexagons, with an average probability of 11.7% and a maximum probability of 14.75%. The area is experiencing extreme heat stress, with a 7-day average daytime surface temperature of 44.7\u00b0C and a drought index of 5.21. CAL FIRE is advising residents to be prepared for potential wildfires, with actions including: preparing defensible space, creating go-bags, and knowing evacuation routes.",
+      "actions": [
+        "Prepare defensible space",
+        "Create go-bags",
+        "Know evacuation routes",
+        "Increase Type 1 engines in the area",
+        "Enhance communication with local authorities"
+      ]
+    }
+  ],
+  "overall_assessment": "California is experiencing a heightened risk of wildfires, with 12 high-risk hexagons statewide. Residents in the Riverside / San Jacinto and San Bernardino Mountains areas are advised to take precautions and be prepared for potential wildfires."
+}

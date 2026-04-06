@@ -1,0 +1,43 @@
+
+=== MODEL INFORMATION ===
+
+Model: LightGBM binary classifier
+Target: Probability of wildfire within 10-21 days per H3 hexagon (resolution 5, ~252 km²)
+Training: 2.9M observations, 1,523 California hexagons, 2020–2025
+Performance: ROC-AUC 0.892, AUC-PR 0.29 (14× above the 2% random baseline)
+Base rate: 2.08% of hex-days have a fire within the forecast window
+
+RISK LEVELS:
+- NO RISK (<1%): Negligible fire probability.
+- LOW (1–3%): At or below baseline seasonal risk. Routine monitoring.
+- MODERATE (3–8%): Elevated conditions worth monitoring.
+- HIGH (8–15%): Significant risk. Preparedness actions warranted.
+- VERY HIGH (>15%): Extreme risk. Active response measures needed.
+
+KNOWN LIMITATIONS:
+- Geographic features dominate — model partially learns WHERE fires historically occur.
+- Class imbalance 1:47 — false alarms expected.
+- California only.
+
+=== EMERGENCY MANAGEMENT REFERENCE ===
+
+KEY INDICATORS:
+- NDVI below 0.20: severe vegetation dryness
+- Daytime LST above 42°C: extreme heat stress
+- Wind gusts above 35 mph: rapid fire spread
+- Santa Ana winds (hot, dry, NE) in Southern CA: particularly dangerous
+
+CAL FIRE READY-SET-GO:
+- READY: Create defensible space, prepare go-bags, know evacuation routes.
+- SET: Evacuation warning. Be prepared to leave immediately.
+- GO: Evacuation order. Leave immediately.
+
+RESOURCE POSITIONING:
+- Type 1 engines within 15-min response time of high-risk areas.
+- Aerial resources on standby at nearest air base.
+- Water tenders at key highway corridors.
+
+HISTORICAL:
+- CA fire season peaks July–November; Santa Ana events Oct–Dec.
+- 2020 August Complex Fire: 1M+ acres.
+- 2018 Camp Fire: 85 fatalities, 40+ mph winds.

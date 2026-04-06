@@ -1,0 +1,58 @@
+[
+  {
+    "n_hexes": 3,
+    "n_very_high": 0,
+    "n_high": 3,
+    "severity": "HIGH",
+    "region": "Riverside / San Jacinto",
+    "center_lat": 33.9176,
+    "center_lon": -117.1323,
+    "avg_prob": 0.1294,
+    "max_prob": 0.1415,
+    "avg_max_temp_f": 102.0,
+    "avg_wind_mph": 7.1,
+    "max_wind_mph": 11.9,
+    "avg_drought_idx": 5.17,
+    "avg_ndvi": 0.145,
+    "avg_lst_day_c": 49.1,
+    "avg_lst_night_c": 29.7,
+    "avg_precip_30d": 0.0337,
+    "avg_temp_7d_f": 100.1,
+    "top_drivers": [
+      "geographic location (historically fire-prone area)",
+      "7-day average daytime surface temperature (\u00b0C)",
+      "30-day average precipitation",
+      "day of year (peak fire season timing)",
+      "satellite daytime surface temperature (\u00b0C)"
+    ],
+    "label": "A"
+  },
+  {
+    "n_hexes": 8,
+    "n_very_high": 0,
+    "n_high": 8,
+    "severity": "HIGH",
+    "region": "San Bernardino Mountains",
+    "center_lat": 34.1521,
+    "center_lon": -117.6107,
+    "avg_prob": 0.117,
+    "max_prob": 0.1475,
+    "avg_max_temp_f": 103.0,
+    "avg_wind_mph": 10.3,
+    "max_wind_mph": 16.5,
+    "avg_drought_idx": 5.21,
+    "avg_ndvi": 0.153,
+    "avg_lst_day_c": 44.7,
+    "avg_lst_night_c": 28.1,
+    "avg_precip_30d": 0.0199,
+    "avg_temp_7d_f": 105.6,
+    "top_drivers": [
+      "geographic location (historically fire-prone area)",
+      "7-day average daytime surface temperature (\u00b0C)",
+      "30-day average precipitation",
+      "cumulative 30-day precipitation deficit",
+      "sustained high temperatures over past 7 days"
+    ],
+    "label": "B"
+  }
+]

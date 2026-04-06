@@ -1,0 +1,28 @@
+PREDICTIONS — 2025-10-05
+Hexagons: 1,309
+VERY_HIGH: 143 | HIGH: 27 | MODERATE: 229 | LOW: 434 | NO_RISK: 476
+Clusters: 4
+
+CLUSTER A: San Bernardino Mountains — VERY_HIGH
+  152 hexes | Prob: avg 0.3445, max 0.5483
+  Temp: 104.2°F | Wind: 29.6mph
+  NDVI: 0.15 | LST day: 44.8°C
+  Drivers: geographic location (historically fire-prone area), satellite daytime surface temperature (°C), 7-day average daytime surface temperature (°C)
+
+CLUSTER B: Shasta-Trinity Region — HIGH
+  3 hexes | Prob: avg 0.0904, max 0.0941
+  Temp: 102.9°F | Wind: 6.4mph
+  NDVI: 0.158 | LST day: 45.9°C
+  Drivers: day of year (peak fire season timing), satellite daytime surface temperature (°C), geographic location (historically fire-prone area)
+
+CLUSTER C: Shasta-Trinity Region — HIGH
+  3 hexes | Prob: avg 0.0896, max 0.0977
+  Temp: 103.2°F | Wind: 12.9mph
+  NDVI: 0.186 | LST day: 42.7°C
+  Drivers: day of year (peak fire season timing), satellite daytime surface temperature (°C), geographic location (historically fire-prone area)
+
+CLUSTER D: Shasta-Trinity Region — HIGH
+  4 hexes | Prob: avg 0.0874, max 0.0917
+  Temp: 101.0°F | Wind: 15.6mph
+  NDVI: 0.176 | LST day: 47.2°C
+  Drivers: geographic location (historically fire-prone area), 7-day average daytime surface temperature (°C), 30-day average precipitation

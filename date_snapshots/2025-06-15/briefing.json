@@ -1,0 +1,4 @@
+{
+  "clusters": [],
+  "overall_assessment": "{\n  \"clusters\": [\n    {\n      \"label\": \"A\",\n      \"region\": \"Shasta-Trinity Region\",\n      \"risk_level\": \"HIGH\",\n      \"summary\": \"Cluster A, Shasta-Trinity Region, has 79 high-risk hexagons with an average probability of 0.1415 and a maximum probability of 0.1982. Temperatures are extremely high, w"
+}

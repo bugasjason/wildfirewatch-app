@@ -1,0 +1,82 @@
+{
+  "clusters": [
+    {
+      "label": "A",
+      "region": "Southern Central Valley",
+      "risk_level": "HIGH",
+      "summary": "Two high-risk hexagons are identified in the Southern Central Valley, with an average probability of 10.35% and a maximum probability of 10.94%. The area is experiencing high temperatures, with a 7-day average daytime surface temperature of 43.5\u00b0C and a drought index of 7.35. CAL FIRE READY-SET-GO protocols are in effect, with a recommendation to be prepared to leave immediately.",
+      "actions": [
+        "Position Type 1 engines within 15-min response time of high-risk areas.",
+        "Activate aerial resources on standby at nearest air base.",
+        "Deploy water tenders at key highway corridors."
+      ]
+    },
+    {
+      "label": "B",
+      "region": "Sequoia National Forest",
+      "risk_level": "HIGH",
+      "summary": "Six high-risk hexagons are identified in the Sequoia National Forest, with an average probability of 9.97% and a maximum probability of 11.95%. The area is experiencing high temperatures, with a 7-day average daytime surface temperature of 44.4\u00b0C and a drought index of 4.67. CAL FIRE READY-SET-GO protocols are in effect, with a recommendation to be prepared to leave immediately.",
+      "actions": [
+        "Increase fire personnel presence in the area.",
+        "Position water tenders at strategic locations within the forest.",
+        "Activate aerial resources on standby at nearest air base."
+      ]
+    },
+    {
+      "label": "C",
+      "region": "Sequoia National Forest",
+      "risk_level": "HIGH",
+      "summary": "Eight high-risk hexagons are identified in the Sequoia National Forest, with an average probability of 9.89% and a maximum probability of 11.18%. The area is experiencing high temperatures, with a 7-day average daytime surface temperature of 45.5\u00b0C and a drought index of 5.13. CAL FIRE READY-SET-GO protocols are in effect, with a recommendation to be prepared to leave immediately.",
+      "actions": [
+        "Deploy additional fire personnel to the area.",
+        "Position water tenders at strategic locations within the forest.",
+        "Activate aerial resources on standby at nearest air base."
+      ]
+    },
+    {
+      "label": "D",
+      "region": "Sequoia National Forest",
+      "risk_level": "HIGH",
+      "summary": "Four high-risk hexagons are identified in the Sequoia National Forest, with an average probability of 9.83% and a maximum probability of 11.64%. The area is experiencing high temperatures, with a 7-day average daytime surface temperature of 45.9\u00b0C and a drought index of 5.15. CAL FIRE READY-SET-GO protocols are in effect, with a recommendation to be prepared to leave immediately.",
+      "actions": [
+        "Increase fire personnel presence in the area.",
+        "Position water tenders at strategic locations within the forest.",
+        "Activate aerial resources on standby at nearest air base."
+      ]
+    },
+    {
+      "label": "E",
+      "region": "Sequoia National Forest",
+      "risk_level": "HIGH",
+      "summary": "Five high-risk hexagons are identified in the Sequoia National Forest, with an average probability of 9.78% and a maximum probability of 11.58%. The area is experiencing high temperatures, with a 7-day average daytime surface temperature of 45.1\u00b0C and a drought index of 4.57. CAL FIRE READY-SET-GO protocols are in effect, with a recommendation to be prepared to leave immediately.",
+      "actions": [
+        "Deploy additional fire personnel to the area.",
+        "Position water tenders at strategic locations within the forest.",
+        "Activate aerial resources on standby at nearest air base."
+      ]
+    },
+    {
+      "label": "F",
+      "region": "San Gabriel Mountains",
+      "risk_level": "HIGH",
+      "summary": "Four high-risk hexagons are identified in the San Gabriel Mountains, with an average probability of 8.88% and a maximum probability of 9.38%. The area is experiencing high temperatures, with a 7-day average daytime surface temperature of 45.5\u00b0C and a drought index of 4.45. CAL FIRE READY-SET-GO protocols are in effect, with a recommendation to be prepared to leave immediately.",
+      "actions": [
+        "Increase fire personnel presence in the area.",
+        "Position water tenders at strategic locations within the mountains.",
+        "Activate aerial resources on standby at nearest air base."
+      ]
+    },
+    {
+      "label": "G",
+      "region": "San Bernardino Mountains",
+      "risk_level": "HIGH",
+      "summary": "Three high-risk hexagons are identified in the San Bernardino Mountains, with an average probability of 8.64% and a maximum probability of 8.9%. The area is experiencing high temperatures, with a 7-day average daytime surface temperature of 48.0\u00b0C and a drought index of 4.31. CAL FIRE READY-SET-GO protocols are in effect, with a recommendation to be prepared to leave immediately.",
+      "actions": [
+        "Deploy additional fire personnel to the area.",
+        "Position water tenders at strategic locations within the mountains.",
+        "Activate aerial resources on standby at nearest air base."
+      ]
+    }
+  ],
+  "overall_assessment": "Seven active clusters are identified across California, with a total of 43 high-risk hexagons. The areas are experiencing high temperatures, drought conditions, and increased fire risk. CAL FIRE READY-SET-GO protocols are in effect for all high-risk areas, with a recommendation to be prepared to leave immediately."
+}
