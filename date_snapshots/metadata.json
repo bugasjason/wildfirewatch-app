@@ -1,0 +1,511 @@
+{
+  "model_type": "Random Forest Tuned",
+  "model_hyperparameters": {
+    "n_estimators": 181,
+    "max_depth": 30,
+    "min_samples_leaf": 38,
+    "max_features": 0.5,
+    "min_samples_split": 21,
+    "class_weight": "balanced"
+  },
+  "task_type": "classification",
+  "model_files": [
+    "model.joblib"
+  ],
+  "target": "fire_in_window",
+  "target_window": {
+    "min_days": 14,
+    "max_days": 14
+  },
+  "forecast_horizon_days": 14,
+  "training_data": {
+    "rows": 2888982,
+    "positives": 59960,
+    "pos_rate": 0.02075,
+    "date_range": "2020-01-15 to 2025-08-28",
+    "hex_count": 1523,
+    "cv_mode": "random",
+    "cv_folds": 3
+  },
+  "performance": {
+    "auc_pr": 0.3002,
+    "roc_auc": 0.8951,
+    "brier": 0.0495
+  },
+  "decision_threshold": 0.77261,
+  "eval_windows": {
+    "7-21": {
+      "threshold": 0.24495,
+      "f1": 0.6479,
+      "precision": 0.6355,
+      "recall": 0.6608
+    },
+    "8-20": {
+      "threshold": 0.25621,
+      "f1": 0.6393,
+      "precision": 0.6146,
+      "recall": 0.6661
+    },
+    "9-19": {
+      "threshold": 0.28173,
+      "f1": 0.6268,
+      "precision": 0.6018,
+      "recall": 0.6541
+    },
+    "10-18": {
+      "threshold": 0.30602,
+      "f1": 0.6116,
+      "precision": 0.5778,
+      "recall": 0.6496
+    },
+    "11-17": {
+      "threshold": 0.34957,
+      "f1": 0.589,
+      "precision": 0.5543,
+      "recall": 0.6283
+    },
+    "12-16": {
+      "threshold": 0.40052,
+      "f1": 0.5519,
+      "precision": 0.5058,
+      "recall": 0.6073
+    },
+    "13-15": {
+      "threshold": 0.49626,
+      "f1": 0.4873,
+      "precision": 0.4372,
+      "recall": 0.5503
+    },
+    "10-21": {
+      "threshold": 0.26845,
+      "f1": 0.6313,
+      "precision": 0.6069,
+      "recall": 0.6578
+    },
+    "11-21": {
+      "threshold": 0.28171,
+      "f1": 0.6191,
+      "precision": 0.592,
+      "recall": 0.6488
+    },
+    "10-20": {
+      "threshold": 0.28173,
+      "f1": 0.6271,
+      "precision": 0.6029,
+      "recall": 0.6533
+    },
+    "14-14": {
+      "threshold": 0.77261,
+      "f1": 0.3426,
+      "precision": 0.3336,
+      "recall": 0.3522
+    },
+    "11-20": {
+      "threshold": 0.29322,
+      "f1": 0.6154,
+      "precision": 0.5849,
+      "recall": 0.6492
+    },
+    "9-21": {
+      "threshold": 0.25621,
+      "f1": 0.6389,
+      "precision": 0.6148,
+      "recall": 0.665
+    },
+    "9-20": {
+      "threshold": 0.26979,
+      "f1": 0.6343,
+      "precision": 0.612,
+      "recall": 0.6583
+    },
+    "12-20": {
+      "threshold": 0.30605,
+      "f1": 0.596,
+      "precision": 0.5574,
+      "recall": 0.6403
+    },
+    "12-18": {
+      "threshold": 0.34967,
+      "f1": 0.5836,
+      "precision": 0.5479,
+      "recall": 0.6243
+    },
+    "11-18": {
+      "threshold": 0.33458,
+      "f1": 0.6009,
+      "precision": 0.5757,
+      "recall": 0.6285
+    }
+  },
+  "operational_window": {
+    "min_days": 10,
+    "max_days": 20
+  },
+  "operational_threshold": 0.28173,
+  "operational_note": "Model was trained on target_window labels (single-day in this run); operational_window is the wider window the deployed app evaluates against. Use operational_threshold and the risk_levels block (also calibrated to operational_window) for any flagging or bucketing decisions in production. decision_threshold is retained for traceability of the trained-model contract.",
+  "risk_levels": {
+    "NONE": [
+      0.0,
+      0.12722
+    ],
+    "LOW": [
+      0.12722,
+      0.28173
+    ],
+    "MODERATE": [
+      0.28173,
+      0.50742
+    ],
+    "HIGH": [
+      0.50742,
+      0.76577
+    ],
+    "VERY_HIGH": [
+      0.76577,
+      1.0
+    ]
+  },
+  "feature_columns": [
+    "centroid_lat",
+    "centroid_lon",
+    "elevation",
+    "log_elevation",
+    "precipitation",
+    "max_temp",
+    "min_temp",
+    "avg_wind_speed",
+    "log_wind_speed",
+    "temp_range",
+    "precip_lag_7",
+    "precip_lag_14",
+    "precip_rolling_7",
+    "precip_rolling_30",
+    "max_temp_rolling_7",
+    "wind_rolling_7",
+    "drought_index",
+    "vpd",
+    "vpd_rolling_7",
+    "vpd_rolling_30",
+    "wind_x_drought",
+    "precip_anomaly",
+    "temp_anomaly",
+    "wind_anomaly",
+    "vpd_anomaly",
+    "precip_monthly_anomaly",
+    "temp_monthly_anomaly",
+    "vpd_monthly_anomaly",
+    "precip_trend",
+    "temp_trend",
+    "vpd_trend",
+    "dry_streak",
+    "vpd_roc_7",
+    "temp_roc_7",
+    "wind_roc_7",
+    "drought_roc_7",
+    "precip_roc_7",
+    "vpd_accel_7",
+    "temp_accel_7",
+    "wind_accel_7",
+    "drought_accel_7",
+    "precip_accel_7",
+    "month_sin",
+    "month_cos",
+    "doy_sin",
+    "doy_cos",
+    "ndvi_mean",
+    "evi_mean",
+    "lai_mean",
+    "fpar_mean",
+    "lst_day_celsius",
+    "lst_night_celsius",
+    "ndvi_rolling_16",
+    "ndvi_anomaly",
+    "ndvi_monthly_anomaly",
+    "evi_rolling_16",
+    "evi_anomaly",
+    "evi_monthly_anomaly",
+    "evi_trend",
+    "evi_ndvi_diff",
+    "lai_rolling_16",
+    "fpar_rolling_16",
+    "lst_day_rolling_7",
+    "lst_night_rolling_7"
+  ],
+  "feature_glossary": {
+    "centroid_lat": {
+      "units": "degrees",
+      "description": "Latitude of the H3 hex centroid."
+    },
+    "centroid_lon": {
+      "units": "degrees",
+      "description": "Longitude of the H3 hex centroid."
+    },
+    "elevation": {
+      "units": "meters",
+      "description": "Mean surface elevation of the hex."
+    },
+    "log_elevation": {
+      "units": "log(meters)",
+      "description": "log1p(elevation). Compresses elevation distribution."
+    },
+    "precipitation": {
+      "units": "log(mm+1)",
+      "description": "Daily precipitation, log1p-transformed in place. Lower = drier day."
+    },
+    "max_temp": {
+      "units": "degrees F",
+      "description": "Daily maximum temperature at the hex."
+    },
+    "min_temp": {
+      "units": "degrees F",
+      "description": "Daily minimum temperature. Values < -20 F treated as NaN (API error)."
+    },
+    "avg_wind_speed": {
+      "units": "mph",
+      "description": "Daily average wind speed, clipped at 0."
+    },
+    "log_wind_speed": {
+      "units": "log(mph+1)",
+      "description": "log1p(avg_wind_speed). Compresses wind distribution."
+    },
+    "temp_range": {
+      "units": "degrees F",
+      "description": "(max_temp - min_temp), clipped at 0. Proxy for diurnal swing / clear-sky conditions."
+    },
+    "precip_lag_7": {
+      "units": "log(mm+1)",
+      "description": "Precipitation 7 days prior (per-hex shift). Captures short-memory wetness."
+    },
+    "precip_lag_14": {
+      "units": "log(mm+1)",
+      "description": "Precipitation 14 days prior (per-hex shift)."
+    },
+    "precip_rolling_7": {
+      "units": "log(mm+1)",
+      "description": "7-day rolling mean of precipitation. Low = recent dry spell."
+    },
+    "precip_rolling_30": {
+      "units": "log(mm+1)",
+      "description": "30-day rolling mean of precipitation. Medium-term wetness."
+    },
+    "max_temp_rolling_7": {
+      "units": "degrees F",
+      "description": "7-day rolling mean of max_temp."
+    },
+    "wind_rolling_7": {
+      "units": "mph",
+      "description": "7-day rolling mean of avg_wind_speed."
+    },
+    "drought_index": {
+      "units": "cumulative deficit",
+      "description": "30-day rolling sum of (precip_median - precipitation).clip(0). Higher = sustained precipitation deficit."
+    },
+    "vpd": {
+      "units": "kPa",
+      "description": "Vapor Pressure Deficit from max/min temp via Tetens formula. Higher = drier air = greater fire risk."
+    },
+    "vpd_rolling_7": {
+      "units": "kPa",
+      "description": "7-day rolling mean of VPD."
+    },
+    "vpd_rolling_30": {
+      "units": "kPa",
+      "description": "30-day rolling mean of VPD."
+    },
+    "wind_x_drought": {
+      "units": "mph \u00b7 deficit",
+      "description": "Interaction term: wind_rolling_7 \u00d7 drought_index. Captures windy+dry combinations."
+    },
+    "precip_anomaly": {
+      "units": "log(mm+1)",
+      "description": "Precipitation deviation from hex-level climatology."
+    },
+    "temp_anomaly": {
+      "units": "degrees F",
+      "description": "Temperature deviation from hex-level climatology."
+    },
+    "wind_anomaly": {
+      "units": "mph",
+      "description": "Wind deviation from hex-level climatology."
+    },
+    "vpd_anomaly": {
+      "units": "kPa",
+      "description": "VPD deviation from hex-level climatology."
+    },
+    "precip_monthly_anomaly": {
+      "units": "log(mm+1)",
+      "description": "Precipitation deviation from month-of-year climatology for the hex."
+    },
+    "temp_monthly_anomaly": {
+      "units": "degrees F",
+      "description": "Temperature deviation from month-of-year climatology."
+    },
+    "vpd_monthly_anomaly": {
+      "units": "kPa",
+      "description": "VPD deviation from month-of-year climatology."
+    },
+    "precip_trend": {
+      "units": "log(mm+1)/day",
+      "description": "Short-term slope of precipitation."
+    },
+    "temp_trend": {
+      "units": "degrees F/day",
+      "description": "Short-term slope of temperature."
+    },
+    "vpd_trend": {
+      "units": "kPa/day",
+      "description": "Short-term slope of VPD. Positive = atmosphere drying out."
+    },
+    "dry_streak": {
+      "units": "days",
+      "description": "Consecutive days with precipitation below a dryness threshold."
+    },
+    "vpd_roc_7": {
+      "units": "kPa/7d",
+      "description": "7-day rate-of-change of VPD."
+    },
+    "temp_roc_7": {
+      "units": "degrees F/7d",
+      "description": "7-day rate-of-change of max_temp."
+    },
+    "wind_roc_7": {
+      "units": "mph/7d",
+      "description": "7-day rate-of-change of wind."
+    },
+    "drought_roc_7": {
+      "units": "deficit/7d",
+      "description": "7-day rate-of-change of drought_index."
+    },
+    "precip_roc_7": {
+      "units": "log(mm+1)/7d",
+      "description": "7-day rate-of-change of precipitation."
+    },
+    "vpd_accel_7": {
+      "units": "kPa/7d^2",
+      "description": "7-day acceleration (delta of delta) of VPD."
+    },
+    "temp_accel_7": {
+      "units": "degrees F/7d^2",
+      "description": "7-day acceleration of max_temp."
+    },
+    "wind_accel_7": {
+      "units": "mph/7d^2",
+      "description": "7-day acceleration of wind."
+    },
+    "drought_accel_7": {
+      "units": "deficit/7d^2",
+      "description": "7-day acceleration of drought_index."
+    },
+    "precip_accel_7": {
+      "units": "log(mm+1)/7d^2",
+      "description": "7-day acceleration of precipitation."
+    },
+    "month_sin": {
+      "units": "unitless [-1,1]",
+      "description": "Cyclical month encoding: sin(2\u03c0\u00b7month/12)."
+    },
+    "month_cos": {
+      "units": "unitless [-1,1]",
+      "description": "Cyclical month encoding: cos(2\u03c0\u00b7month/12)."
+    },
+    "doy_sin": {
+      "units": "unitless [-1,1]",
+      "description": "Cyclical day-of-year encoding: sin(2\u03c0\u00b7doy/365)."
+    },
+    "doy_cos": {
+      "units": "unitless [-1,1]",
+      "description": "Cyclical day-of-year encoding: cos(2\u03c0\u00b7doy/365)."
+    },
+    "ndvi_mean": {
+      "units": "unitless [-1,1]",
+      "description": "MODIS Normalized Difference Vegetation Index. Higher = greener/healthier vegetation (less cured fuel)."
+    },
+    "evi_mean": {
+      "units": "unitless",
+      "description": "MODIS Enhanced Vegetation Index. Greenness with reduced atmospheric/soil bias."
+    },
+    "lai_mean": {
+      "units": "m^2/m^2",
+      "description": "MODIS Leaf Area Index. Canopy density."
+    },
+    "fpar_mean": {
+      "units": "fraction [0,1]",
+      "description": "MODIS Fraction of Absorbed Photosynthetically Active Radiation."
+    },
+    "lst_day_celsius": {
+      "units": "degrees C",
+      "description": "MODIS daytime Land Surface Temperature."
+    },
+    "lst_night_celsius": {
+      "units": "degrees C",
+      "description": "MODIS nighttime Land Surface Temperature."
+    },
+    "ndvi_rolling_16": {
+      "units": "unitless",
+      "description": "16-day rolling mean of NDVI."
+    },
+    "ndvi_anomaly": {
+      "units": "unitless",
+      "description": "NDVI deviation from hex climatology. Negative = vegetation stress."
+    },
+    "ndvi_monthly_anomaly": {
+      "units": "unitless",
+      "description": "NDVI deviation from month-of-year climatology."
+    },
+    "evi_rolling_16": {
+      "units": "unitless",
+      "description": "16-day rolling mean of EVI."
+    },
+    "evi_anomaly": {
+      "units": "unitless",
+      "description": "EVI deviation from hex climatology."
+    },
+    "evi_monthly_anomaly": {
+      "units": "unitless",
+      "description": "EVI deviation from month-of-year climatology."
+    },
+    "evi_trend": {
+      "units": "unitless/day",
+      "description": "Short-term slope of EVI. Negative = browning."
+    },
+    "evi_ndvi_diff": {
+      "units": "unitless",
+      "description": "EVI \u2212 NDVI. Divergence between the two greenness indices."
+    },
+    "lai_rolling_16": {
+      "units": "m^2/m^2",
+      "description": "16-day rolling mean of LAI."
+    },
+    "fpar_rolling_16": {
+      "units": "fraction",
+      "description": "16-day rolling mean of FPAR."
+    },
+    "lst_day_rolling_7": {
+      "units": "degrees C",
+      "description": "7-day rolling mean of daytime LST."
+    },
+    "lst_night_rolling_7": {
+      "units": "degrees C",
+      "description": "7-day rolling mean of nighttime LST."
+    }
+  },
+  "shap_base_value": 0.50014,
+  "shap_note": "For each sample row in sample_predictions.csv, the model output is approximately shap_base_value + sum(all feature SHAP values). The driver_k_feature / driver_k_shap columns list the top-10 features by |SHAP| for that row; sign indicates direction (+ pushes fire risk up, - pushes it down). SHAP values are on the model's raw margin scale for tree models, not probability.",
+  "imputation": "median (SimpleImputer)",
+  "preprocessing_steps": [
+    "1. avg_wind_speed: clip(lower=0)",
+    "2. min_temp: set to NaN if < -20 F (API error)",
+    "3. precipitation = log1p(precipitation) \u2014 applied IN-PLACE",
+    "4. log_elevation = log1p(elevation)",
+    "5. log_wind_speed = log1p(avg_wind_speed)",
+    "6. temp_range = (max_temp - min_temp).clip(lower=0)",
+    "7. Lag features: precip_lag_7/14 = groupby(hex_id).shift(7/14)",
+    "8. Rolling: precip_rolling_7/30, max_temp_rolling_7, wind_rolling_7",
+    "9. drought_index = 30-day rolling sum of (precip_median - precip).clip(0)",
+    "10. VPD via Tetens formula from max/min temp",
+    "11. Rate-of-change + acceleration features (7-day deltas)",
+    "12. Cyclical encoding: month_sin/cos, doy_sin/cos",
+    "13. Drop rows with NaN in precip_lag_14, precip_rolling_30, drought_index",
+    "14. Impute remaining NaN with median"
+  ]
+}
