@@ -76,11 +76,11 @@ RISK_DISPLAY = {
 }
 
 RISK_COLOR_HEX = {
-    'VERY_HIGH': '#dc2626',
-    'HIGH':      '#ea580c',
-    'MODERATE':  '#d97706',
-    'LOW':       '#6b7e32',
-    'NONE':      '#374151',
+    'VERY_HIGH': '#ff0000',
+    'HIGH':      '#ff8c00',
+    'MODERATE':  '#ffe600',
+    'LOW':       '#2db478',
+    'NONE':      '#646478',
     'NO_DATA':   '#1e2330',
 }
 
@@ -222,10 +222,11 @@ def format_date_label(entry):
 
 def risk_to_color(level):
     return {
-        'VERY_HIGH': [220, 38,  38,  230],
-        'HIGH':      [234, 88,  12,  200],
-        'MODERATE':  [234, 159, 8,   130],
-        'LOW':       [120, 150, 50,   60],
+        'VERY_HIGH': [255,   0,   0, 230],
+        'HIGH':      [255, 140,   0, 210],
+        'MODERATE':  [255, 230,   0, 160],
+        'LOW':       [ 45, 180, 120,  90],
+        'NONE':      [100, 100, 120,  50],
     }.get(level, [30, 35, 45, 35])
 
 def build_briefing_download(forecast_date, n_vh, n_h, n_m, n_l, n_none,
@@ -305,6 +306,16 @@ with st.sidebar:
         st.error(f"Missing file: {e.filename}")
         st.stop()
 
+    # Bug 1 fix: recompute risk_level from metadata thresholds — never trust CSV column alone
+    _tiers = metadata['risk_levels']  # e.g. {'NONE':[0,0.127], 'LOW':[0.127,0.282], ...}
+    def _assign_tier(p):
+        for name, (lo, hi) in _tiers.items():
+            if lo <= p < hi:
+                return name
+        return 'VERY_HIGH'
+    predictions = predictions.copy()
+    predictions['risk_level'] = predictions['predicted_probability'].apply(_assign_tier)
+
     forecast_date = predictions['date'].iloc[0] if 'date' in predictions.columns else selected_date
 
     n_vh   = int((predictions['risk_level'] == 'VERY_HIGH').sum())
@@ -312,6 +323,14 @@ with st.sidebar:
     n_m    = int((predictions['risk_level'] == 'MODERATE').sum())
     n_l    = int((predictions['risk_level'] == 'LOW').sum())
     n_none = int((predictions['risk_level'] == 'NONE').sum())
+
+    # Debug: print summary to console so we can verify counts and prob range
+    print(
+        f"DEBUG: {selected_date} loaded {len(predictions)} rows, "
+        f"NONE={n_none} LOW={n_l} MOD={n_m} HIGH={n_h} VH={n_vh}, "
+        f"prob range={predictions['predicted_probability'].min():.3f}"
+        f"-{predictions['predicted_probability'].max():.3f}"
+    )
 
     st.divider()
     st.markdown(f"**Forecast date:** {forecast_date}")
@@ -326,6 +345,7 @@ with st.sidebar:
         ('HIGH',      'High',      True),
         ('MODERATE',  'Moderate',  False),
         ('LOW',       'Low',       False),
+        ('NONE',      'None',      False),
     ]
     show_levels = [code for code, lbl, default in _level_opts
                    if st.checkbox(lbl, value=default, key=f"cb_{code}")]
@@ -415,7 +435,7 @@ base_layer = pdk.Layer(
     get_hexagon="hex_id", get_fill_color="color",
     opacity=0.5, pickable=False, auto_highlight=False,
 )
-# Risk layer: only selected levels; NONE zones never rendered
+# Risk layer: all selected levels — NONE and LOW render when their checkboxes are on
 filtered = map_data[map_data['risk_level'].isin(show_levels)]
 hex_layer = pdk.Layer(
     "H3HexagonLayer",
@@ -450,10 +470,11 @@ st.pydeck_chart(
 )
 st.markdown(
     '<div class="legend">'
-    '<div class="legend-item"><div class="legend-dot" style="background:#dc2626;"></div>Very High</div>'
-    '<div class="legend-item"><div class="legend-dot" style="background:#ea580c;"></div>High</div>'
-    '<div class="legend-item"><div class="legend-dot" style="background:#d97706;opacity:0.8;"></div>Moderate</div>'
-    '<div class="legend-item"><div class="legend-dot" style="background:#6b7e32;opacity:0.5;"></div>Low</div>'
+    '<div class="legend-item"><div class="legend-dot" style="background:#ff0000;"></div>Very High</div>'
+    '<div class="legend-item"><div class="legend-dot" style="background:#ff8c00;"></div>High</div>'
+    '<div class="legend-item"><div class="legend-dot" style="background:#ffe600;"></div>Moderate</div>'
+    '<div class="legend-item"><div class="legend-dot" style="background:#2db478;opacity:0.6;"></div>Low</div>'
+    '<div class="legend-item"><div class="legend-dot" style="background:#646478;opacity:0.5;"></div>None</div>'
     '<div class="legend-item"><div class="legend-dot" style="background:#1e2330;opacity:0.8;"></div>No data</div>'
     '</div>',
     unsafe_allow_html=True
