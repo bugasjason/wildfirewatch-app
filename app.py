@@ -305,13 +305,29 @@ with st.sidebar:
         st.error(f"Missing file: {e.filename}")
         st.stop()
 
+    # ── COLUMN NORMALIZATION ──
+    # Normalize probability column so the rest of the app always uses 'predicted_probability'
+    predictions = predictions.copy()
+    if 'predicted_probability' not in predictions.columns:
+        if 'fire_probability' in predictions.columns:
+            predictions['predicted_probability'] = predictions['fire_probability']
+        else:
+            predictions['predicted_probability'] = 0.0
+
+    # Detect driver columns (handles both old top_3_drivers and new driver_N_feature/shap formats)
+    _driver_feat_cols = sorted([c for c in predictions.columns if c.startswith('driver_') and c.endswith('_feature')],
+                               key=lambda c: int(c.split('_')[1]))
+    _driver_shap_cols = sorted([c for c in predictions.columns if c.startswith('driver_') and c.endswith('_shap')],
+                               key=lambda c: int(c.split('_')[1]))
+    has_drivers = len(_driver_feat_cols) > 0
+
     forecast_date = predictions['date'].iloc[0] if 'date' in predictions.columns else selected_date
 
-    n_vh   = int((predictions['risk_level'] == 'VERY_HIGH').sum())
-    n_h    = int((predictions['risk_level'] == 'HIGH').sum())
-    n_m    = int((predictions['risk_level'] == 'MODERATE').sum())
-    n_l    = int((predictions['risk_level'] == 'LOW').sum())
-    n_none = int((predictions['risk_level'] == 'NONE').sum())
+    n_vh   = int((predictions['risk_level'] == 'VERY_HIGH').sum()) if 'risk_level' in predictions.columns else 0
+    n_h    = int((predictions['risk_level'] == 'HIGH').sum())      if 'risk_level' in predictions.columns else 0
+    n_m    = int((predictions['risk_level'] == 'MODERATE').sum())  if 'risk_level' in predictions.columns else 0
+    n_l    = int((predictions['risk_level'] == 'LOW').sum())       if 'risk_level' in predictions.columns else 0
+    n_none = int((predictions['risk_level'] == 'NONE').sum())      if 'risk_level' in predictions.columns else 0
 
     st.divider()
     st.markdown(f"**Forecast date:** {forecast_date}")
@@ -342,14 +358,14 @@ with st.sidebar:
 ca_base = load_ca_base()
 
 # Merge predictions onto CA base for full state coverage
-map_data = ca_base.merge(
-    predictions[['hex_id', 'predicted_probability', 'risk_level']
-                + [f'driver_{k}_feature' for k in range(1, 4)]
-                + [f'driver_{k}_shap'    for k in range(1, 4)]],
-    on='hex_id', how='left'
-)
-map_data['risk_level']          = map_data['risk_level'].fillna('NO_DATA')
-map_data['predicted_probability'] = map_data['predicted_probability'].fillna(0.0)
+# Only include columns that actually exist in this CSV
+_merge_cols = [c for c in
+               ['hex_id', 'predicted_probability', 'risk_level']
+               + _driver_feat_cols[:3] + _driver_shap_cols[:3]
+               if c in predictions.columns]
+map_data = ca_base.merge(predictions[_merge_cols], on='hex_id', how='left')
+map_data['risk_level']            = map_data['risk_level'].fillna('NO_DATA') if 'risk_level' in map_data.columns else 'NO_DATA'
+map_data['predicted_probability'] = map_data['predicted_probability'].fillna(0.0) if 'predicted_probability' in map_data.columns else 0.0
 
 # Pre-compute display columns for tooltip
 map_data['fire_risk_pct']      = (map_data['predicted_probability'] * 100).round(1).astype(str) + '%'
@@ -694,10 +710,14 @@ with chat_col:
 # ── RAW DATA TABLE ──
 st.divider()
 with st.expander("View forecast data — top 10 highest-risk zones"):
-    cols = [c for c in ['hex_id', 'predicted_probability', 'risk_level'] if c in predictions.columns]
-    # Add translated key factors column
-    top10 = predictions.nlargest(10, 'predicted_probability')[cols].copy()
+    _table_cols = [c for c in
+                   ['hex_id', 'predicted_probability', 'risk_level']
+                   + _driver_feat_cols[:3] + _driver_shap_cols[:3]
+                   if c in predictions.columns]
+    top10 = predictions.nlargest(10, 'predicted_probability')[_table_cols].copy()
     top10['key_factors'] = top10.apply(build_key_factors, axis=1)
+    # Drop raw driver columns now that key_factors is computed
+    top10 = top10.drop(columns=[c for c in _driver_feat_cols[:3] + _driver_shap_cols[:3] if c in top10.columns])
     if 'predicted_probability' in top10.columns:
         top10['predicted_probability'] = (top10['predicted_probability'] * 100).round(1).astype(str) + '%'
     if 'risk_level' in top10.columns:
