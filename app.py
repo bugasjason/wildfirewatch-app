@@ -715,10 +715,13 @@ with chat_col:
 # ── RAW DATA TABLE ──
 st.divider()
 with st.expander("View forecast data — top 10 highest-risk zones"):
-    cols = [c for c in ['hex_id', 'predicted_probability', 'risk_level'] if c in predictions.columns]
-    # Add translated key factors column
-    top10 = predictions.nlargest(10, 'predicted_probability')[cols].copy()
+    _driver_cols = [f'driver_{k}_feature' for k in range(1, 4)] + [f'driver_{k}_shap' for k in range(1, 4)]
+    _table_cols  = [c for c in ['hex_id', 'predicted_probability', 'risk_level'] + _driver_cols
+                    if c in predictions.columns]
+    top10 = predictions.nlargest(10, 'predicted_probability')[_table_cols].copy()
     top10['key_factors'] = top10.apply(build_key_factors, axis=1)
+    # Drop raw driver columns — they've been translated into key_factors
+    top10 = top10.drop(columns=[c for c in _driver_cols if c in top10.columns])
     if 'predicted_probability' in top10.columns:
         top10['predicted_probability'] = (top10['predicted_probability'] * 100).round(1).astype(str) + '%'
     if 'risk_level' in top10.columns:
