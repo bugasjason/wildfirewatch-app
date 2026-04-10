@@ -1,4 +1,82 @@
 {
-  "clusters": [],
-  "overall_assessment": "{\n  \"clusters\": [\n    {\n      \"label\": \"A\",\n      \"region\": \"Shasta-Trinity Region\",\n      \"risk_level\": \"HIGH\",\n      \"summary\": \"Cluster A, Shasta-Trinity Region, has 79 high-risk hexagons with an average probability of 0.1415 and a maximum probability of 0.1982. Temperatures are extremely high, w"
+  "clusters": [
+    {
+      "label": "A",
+      "region": "Shasta-Trinity Region",
+      "risk_level": "HIGH",
+      "summary": "The Shasta-Trinity Region is experiencing a high risk of wildfires, with an average fire probability of 57.8% across 2 zones. This area is historically fire-prone and has been experiencing extreme nighttime temperatures, which are key risk factors.",
+      "actions": [
+        "Type 1 engines should be positioned within 15-min response time of high-risk areas in the Shasta-Trinity Region.",
+        "Aerial resources should be on standby at the nearest air base.",
+        "Residents in the Shasta-Trinity Region should be in READY mode, creating defensible space and preparing go-bags."
+      ]
+    },
+    {
+      "label": "B",
+      "region": "Shasta-Trinity Region",
+      "risk_level": "HIGH",
+      "summary": "The Shasta-Trinity Region is experiencing a high risk of wildfires, with an average fire probability of 57.0% across 3 zones. This area is historically fire-prone and has been experiencing extreme nighttime temperatures, which are key risk factors.",
+      "actions": [
+        "Type 1 engines should be positioned within 15-min response time of high-risk areas in the Shasta-Trinity Region.",
+        "Aerial resources should be on standby at the nearest air base.",
+        "Residents in the Shasta-Trinity Region should be in READY mode, creating defensible space and preparing go-bags."
+      ]
+    },
+    {
+      "label": "C",
+      "region": "Shasta-Trinity Region",
+      "risk_level": "HIGH",
+      "summary": "The Shasta-Trinity Region is experiencing a high risk of wildfires, with an average fire probability of 55.5% across 3 zones. This area is historically fire-prone and has been experiencing extreme nighttime temperatures, which are key risk factors.",
+      "actions": [
+        "Type 1 engines should be positioned within 15-min response time of high-risk areas in the Shasta-Trinity Region.",
+        "Aerial resources should be on standby at the nearest air base.",
+        "Residents in the Shasta-Trinity Region should be in READY mode, creating defensible space and preparing go-bags."
+      ]
+    },
+    {
+      "label": "D",
+      "region": "Klamath National Forest",
+      "risk_level": "HIGH",
+      "summary": "The Klamath National Forest is experiencing a high risk of wildfires, with an average fire probability of 55.2% across 5 zones. This area is historically fire-prone and has been experiencing extreme nighttime temperatures, which are key risk factors.",
+      "actions": [
+        "Type 1 engines should be positioned within 15-min response time of high-risk areas in the Klamath National Forest.",
+        "Aerial resources should be on standby at the nearest air base.",
+        "Residents in the Klamath National Forest should be in READY mode, creating defensible space and preparing go-bags."
+      ]
+    },
+    {
+      "label": "E",
+      "region": "Shasta-Trinity Region",
+      "risk_level": "HIGH",
+      "summary": "The Shasta-Trinity Region is experiencing a high risk of wildfires, with an average fire probability of 53.5% across 9 zones. This area is historically fire-prone and has been experiencing extreme nighttime temperatures, which are key risk factors.",
+      "actions": [
+        "Type 1 engines should be positioned within 15-min response time of high-risk areas in the Shasta-Trinity Region.",
+        "Aerial resources should be on standby at the nearest air base.",
+        "Residents in the Shasta-Trinity Region should be in READY mode, creating defensible space and preparing go-bags."
+      ]
+    },
+    {
+      "label": "F",
+      "region": "San Bernardino Mountains",
+      "risk_level": "HIGH",
+      "summary": "The San Bernardino Mountains are experiencing a high risk of wildfires, with an average fire probability of 53.3% across 3 zones. This area is historically fire-prone and has been experiencing extreme nighttime temperatures, which are key risk factors.",
+      "actions": [
+        "Type 1 engines should be positioned within 15-min response time of high-risk areas in the San Bernardino Mountains.",
+        "Aerial resources should be on standby at the nearest air base.",
+        "Residents in the San Bernardino Mountains should be in READY mode, creating defensible space and preparing go-bags."
+      ]
+    },
+    {
+      "label": "G",
+      "region": "NE Los Angeles County",
+      "risk_level": "HIGH",
+      "summary": "NE Los Angeles County is experiencing a high risk of wildfires, with an average fire probability of 52.8% across 5 zones. This area is historically fire-prone and has been experiencing extreme nighttime temperatures, which are key risk factors.",
+      "actions": [
+        "Type 1 engines should be positioned within 15-min response time of high-risk areas in NE Los Angeles County.",
+        "Aerial resources should be on standby at the nearest air base.",
+        "Residents in NE Los Angeles County should be in READY mode, creating defensible space and preparing go-bags."
+      ]
+    }
+  ],
+  "overall_assessment": "California is experiencing a high risk of wildfires, with 35 zones at HIGH risk and 191 zones at MODERATE risk. The Shasta-Trinity Region and Klamath National Forest are particularly vulnerable due to their historically fire-prone areas and extreme nighttime temperatures."
 }

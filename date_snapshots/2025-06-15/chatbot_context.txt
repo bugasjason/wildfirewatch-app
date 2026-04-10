@@ -1,64 +1,36 @@
-PREDICTIONS — 2025-06-15
-Hexagons: 1,309
-VERY_HIGH: 36 | HIGH: 127 | MODERATE: 370 | LOW: 478 | NO_RISK: 298
-Clusters: 10
+CURRENT FORECAST — 2025-06-15
+Zones: 1,309
+  VERY_HIGH: 0
+  HIGH: 35
+  MODERATE: 191
+  LOW: 487
+  NONE: 596
+Risk clusters: 7
 
 CLUSTER A: Shasta-Trinity Region — HIGH
-  79 hexes | Prob: avg 0.1415, max 0.1982
-  Temp: 105.5°F | Wind: 20.0mph
-  NDVI: 0.155 | LST day: 45.2°C
-  Drivers: geographic location (historically fire-prone area), satellite daytime surface temperature (°C), cumulative 30-day precipitation deficit
+  2 zones | Prob: avg 57.8%, max 58.8%
+  Risk factors: geographic location (historically fire-prone area), 7-day rolling mean of nighttime LST., geographic location (historically fire-prone area)
 
-CLUSTER B: Riverside / San Jacinto — VERY_HIGH
-  2 hexes | Prob: avg 0.1328, max 0.1726
-  Temp: 102.9°F | Wind: 11.9mph
-  NDVI: 0.149 | LST day: 49.5°C
-  Drivers: geographic location (historically fire-prone area), cumulative 30-day precipitation deficit, sustained high temperatures over past 7 days
+CLUSTER B: Shasta-Trinity Region — HIGH
+  3 zones | Prob: avg 57.0%, max 59.2%
+  Risk factors: geographic location (historically fire-prone area), 7-day rolling mean of nighttime LST., geographic location (historically fire-prone area)
 
-CLUSTER C: San Francisco Bay Area — HIGH
-  2 hexes | Prob: avg 0.1254, max 0.1476
-  Temp: 107.1°F | Wind: 5.6mph
-  NDVI: 0.162 | LST day: 46.0°C
-  Drivers: geographic location (historically fire-prone area), 7-day average daytime surface temperature (°C), 30-day average precipitation
+CLUSTER C: Shasta-Trinity Region — HIGH
+  3 zones | Prob: avg 55.5%, max 58.2%
+  Risk factors: geographic location (historically fire-prone area), 7-day rolling mean of nighttime LST., geographic location (historically fire-prone area)
 
-CLUSTER D: San Gabriel Mountains — HIGH
-  30 hexes | Prob: avg 0.1171, max 0.1499
-  Temp: 104.4°F | Wind: 10.9mph
-  NDVI: 0.14 | LST day: 45.0°C
-  Drivers: geographic location (historically fire-prone area), day of year (peak fire season timing), satellite daytime surface temperature (°C)
+CLUSTER D: Klamath National Forest — HIGH
+  5 zones | Prob: avg 55.2%, max 59.6%
+  Risk factors: geographic location (historically fire-prone area), 7-day rolling mean of nighttime LST., geographic location (historically fire-prone area)
 
-CLUSTER E: Butte County / Paradise — HIGH
-  2 hexes | Prob: avg 0.1055, max 0.127
-  Temp: 105.6°F | Wind: 14.2mph
-  NDVI: 0.148 | LST day: 45.8°C
-  Drivers: geographic location (historically fire-prone area), 7-day average daytime surface temperature (°C), 30-day average precipitation
+CLUSTER E: Shasta-Trinity Region — HIGH
+  9 zones | Prob: avg 53.5%, max 58.4%
+  Risk factors: geographic location (historically fire-prone area), 7-day rolling mean of nighttime LST., geographic location (historically fire-prone area)
 
-CLUSTER F: Lake Tahoe / El Dorado — HIGH
-  2 hexes | Prob: avg 0.1011, max 0.1126
-  Temp: 101.1°F | Wind: 9.6mph
-  NDVI: 0.133 | LST day: 46.1°C
-  Drivers: day of year (peak fire season timing), satellite daytime surface temperature (°C), geographic location (historically fire-prone area)
+CLUSTER F: San Bernardino Mountains — HIGH
+  3 zones | Prob: avg 53.3%, max 55.0%
+  Risk factors: geographic location (historically fire-prone area), 7-day rolling mean of nighttime LST., geographic location (historically fire-prone area)
 
-CLUSTER G: Riverside / San Jacinto — HIGH
-  2 hexes | Prob: avg 0.0988, max 0.0994
-  Temp: 99.5°F | Wind: 8.7mph
-  NDVI: 0.149 | LST day: 45.7°C
-  Drivers: cumulative 30-day precipitation deficit, sustained high temperatures over past 7 days, geographic location (historically fire-prone area)
-
-CLUSTER H: San Bernardino Mountains — HIGH
-  2 hexes | Prob: avg 0.0984, max 0.101
-  Temp: 101.3°F | Wind: 8.7mph
-  NDVI: 0.17 | LST day: 47.3°C
-  Drivers: cumulative 30-day precipitation deficit, sustained high temperatures over past 7 days, geographic location (historically fire-prone area)
-
-CLUSTER I: Sequoia National Forest — HIGH
-  2 hexes | Prob: avg 0.0943, max 0.0987
-  Temp: 102.8°F | Wind: 15.0mph
-  NDVI: 0.206 | LST day: 47.3°C
-  Drivers: day of year (peak fire season timing), satellite daytime surface temperature (°C), geographic location (historically fire-prone area)
-
-CLUSTER J: Sequoia National Forest — HIGH
-  5 hexes | Prob: avg 0.0917, max 0.0996
-  Temp: 103.0°F | Wind: 10.4mph
-  NDVI: 0.158 | LST day: 44.2°C
-  Drivers: geographic location (historically fire-prone area), 7-day average daytime surface temperature (°C), 30-day average precipitation
+CLUSTER G: NE Los Angeles County — HIGH
+  5 zones | Prob: avg 52.8%, max 54.6%
+  Risk factors: geographic location (historically fire-prone area), 7-day rolling mean of nighttime LST., geographic location (historically fire-prone area)

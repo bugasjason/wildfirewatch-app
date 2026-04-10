@@ -1,112 +1,122 @@
 [
   {
-    "n_hexes": 37,
-    "n_very_high": 37,
-    "n_high": 0,
-    "severity": "VERY_HIGH",
+    "n_hexes": 38,
+    "n_very_high": 16,
+    "n_high": 22,
+    "severity": "HIGH",
     "region": "San Gabriel Mountains",
-    "center_lat": 34.1433,
-    "center_lon": -117.7456,
-    "avg_prob": 0.3152,
-    "max_prob": 0.4829,
-    "avg_max_temp_f": 104.6,
-    "avg_wind_mph": 36.6,
-    "max_wind_mph": 49.9,
-    "avg_drought_idx": 4.98,
-    "avg_ndvi": 0.133,
-    "avg_lst_day_c": 44.9,
-    "avg_lst_night_c": 26.8,
-    "avg_precip_30d": 0.0232,
-    "avg_temp_7d_f": 101.8,
+    "center_lat": 34.1536,
+    "center_lon": -117.7371,
+    "avg_prob": 0.7558,
+    "max_prob": 0.9191,
+    "min_prob": 0.5854,
     "top_drivers": [
-      "geographic location (historically fire-prone area)",
-      "satellite daytime surface temperature (\u00b0C)",
-      "7-day average daytime surface temperature (\u00b0C)",
-      "cumulative 30-day precipitation deficit",
-      "sustained high temperatures over past 7 days"
+      {
+        "feature": "centroid_lat",
+        "plain_english": "geographic location (historically fire-prone area)",
+        "frequency": 38
+      },
+      {
+        "feature": "centroid_lon",
+        "plain_english": "geographic location (historically fire-prone area)",
+        "frequency": 38
+      },
+      {
+        "feature": "lst_night_rolling_7",
+        "plain_english": "7-day rolling mean of nighttime LST.",
+        "frequency": 28
+      },
+      {
+        "feature": "vpd_rolling_30",
+        "plain_english": "30-day rolling mean of VPD.",
+        "frequency": 22
+      },
+      {
+        "feature": "drought_index",
+        "plain_english": "30-day rolling sum of (precip_median - precipitation).clip(0). Higher = sustained precipitation deficit.",
+        "frequency": 22
+      }
     ],
     "label": "A"
   },
   {
-    "n_hexes": 80,
-    "n_very_high": 56,
-    "n_high": 24,
-    "severity": "VERY_HIGH",
+    "n_hexes": 57,
+    "n_very_high": 7,
+    "n_high": 50,
+    "severity": "HIGH",
     "region": "Shasta-Trinity Region",
-    "center_lat": 40.76,
-    "center_lon": -122.2645,
-    "avg_prob": 0.1906,
-    "max_prob": 0.2996,
-    "avg_max_temp_f": 104.0,
-    "avg_wind_mph": 25.8,
-    "max_wind_mph": 49.9,
-    "avg_drought_idx": 4.96,
-    "avg_ndvi": 0.154,
-    "avg_lst_day_c": 44.9,
-    "avg_lst_night_c": 28.4,
-    "avg_precip_30d": 0.0222,
-    "avg_temp_7d_f": 100.8,
+    "center_lat": 40.7247,
+    "center_lon": -122.2437,
+    "avg_prob": 0.65,
+    "max_prob": 0.7951,
+    "min_prob": 0.5173,
     "top_drivers": [
-      "geographic location (historically fire-prone area)",
-      "satellite daytime surface temperature (\u00b0C)",
-      "cumulative 30-day precipitation deficit",
-      "7-day average daytime surface temperature (\u00b0C)",
-      "sustained high temperatures over past 7 days"
+      {
+        "feature": "centroid_lat",
+        "plain_english": "geographic location (historically fire-prone area)",
+        "frequency": 57
+      },
+      {
+        "feature": "lst_night_rolling_7",
+        "plain_english": "7-day rolling mean of nighttime LST.",
+        "frequency": 56
+      },
+      {
+        "feature": "centroid_lon",
+        "plain_english": "geographic location (historically fire-prone area)",
+        "frequency": 53
+      },
+      {
+        "feature": "vpd_rolling_30",
+        "plain_english": "30-day rolling mean of VPD.",
+        "frequency": 50
+      },
+      {
+        "feature": "drought_index",
+        "plain_english": "30-day rolling sum of (precip_median - precipitation).clip(0). Higher = sustained precipitation deficit.",
+        "frequency": 50
+      }
     ],
     "label": "B"
-  },
-  {
-    "n_hexes": 24,
-    "n_very_high": 0,
-    "n_high": 24,
-    "severity": "HIGH",
-    "region": "Sequoia National Forest",
-    "center_lat": 36.5249,
-    "center_lon": -118.9739,
-    "avg_prob": 0.1146,
-    "max_prob": 0.1463,
-    "avg_max_temp_f": 104.6,
-    "avg_wind_mph": 9.7,
-    "max_wind_mph": 17.6,
-    "avg_drought_idx": 4.99,
-    "avg_ndvi": 0.14,
-    "avg_lst_day_c": 44.9,
-    "avg_lst_night_c": 29.5,
-    "avg_precip_30d": 0.0184,
-    "avg_temp_7d_f": 102.1,
-    "top_drivers": [
-      "geographic location (historically fire-prone area)",
-      "cumulative 30-day precipitation deficit",
-      "sustained high temperatures over past 7 days",
-      "day of year (peak fire season timing)",
-      "satellite daytime surface temperature (\u00b0C)"
-    ],
-    "label": "C"
   },
   {
     "n_hexes": 2,
     "n_very_high": 0,
     "n_high": 2,
     "severity": "HIGH",
-    "region": "Lake Tahoe / El Dorado",
-    "center_lat": 38.5453,
-    "center_lon": -120.4718,
-    "avg_prob": 0.0935,
-    "max_prob": 0.0996,
-    "avg_max_temp_f": 107.3,
-    "avg_wind_mph": 13.8,
-    "max_wind_mph": 16.5,
-    "avg_drought_idx": 6.89,
-    "avg_ndvi": 0.156,
-    "avg_lst_day_c": 39.4,
-    "avg_lst_night_c": 30.3,
-    "avg_precip_30d": 0.0265,
-    "avg_temp_7d_f": 101.2,
+    "region": "Sequoia National Forest",
+    "center_lat": 36.7541,
+    "center_lon": -119.2763,
+    "avg_prob": 0.5323,
+    "max_prob": 0.5421,
+    "min_prob": 0.5224,
     "top_drivers": [
-      "day of year (peak fire season timing)",
-      "satellite daytime surface temperature (\u00b0C)",
-      "geographic location (historically fire-prone area)"
+      {
+        "feature": "centroid_lat",
+        "plain_english": "geographic location (historically fire-prone area)",
+        "frequency": 2
+      },
+      {
+        "feature": "lst_night_rolling_7",
+        "plain_english": "7-day rolling mean of nighttime LST.",
+        "frequency": 2
+      },
+      {
+        "feature": "centroid_lon",
+        "plain_english": "geographic location (historically fire-prone area)",
+        "frequency": 2
+      },
+      {
+        "feature": "vpd_rolling_30",
+        "plain_english": "30-day rolling mean of VPD.",
+        "frequency": 2
+      },
+      {
+        "feature": "drought_index",
+        "plain_english": "30-day rolling sum of (precip_median - precipitation).clip(0). Higher = sustained precipitation deficit.",
+        "frequency": 2
+      }
     ],
-    "label": "D"
+    "label": "C"
   }
 ]
