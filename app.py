@@ -300,6 +300,10 @@ with st.sidebar:
     )
     selected_date = selected_entry['date']
 
+    if 'current_date' not in st.session_state or st.session_state.current_date != selected_date:
+        st.session_state.messages = [{"role": "assistant", "content": "Ask me about current fire risk, evacuation planning, or resource staging for any region."}]
+        st.session_state.current_date = selected_date
+
     try:
         with st.spinner("Loading forecast..."):
             predictions, clusters, briefing, chatbot_ctx = load_date_data(selected_date)
@@ -441,16 +445,19 @@ hex_layer = pdk.Layer(
     opacity=map_opacity, pickable=True, auto_highlight=True,
 )
 
-tooltip = {
-    "html": """
-<div style="font-family:DM Sans,sans-serif;padding:13px 15px;min-width:210px;">
-  <div style="font-size:1.1rem;font-weight:800;color:{risk_color_hex};margin-bottom:2px;">{risk_level_display}</div>
-  <div style="font-size:1.5rem;font-weight:700;color:#f1f5f9;margin-bottom:10px;">{fire_risk_pct} fire risk</div>
+_drivers_html = """
   <div style="border-top:1px solid #1f2937;padding-top:8px;margin-bottom:8px;">
     <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#4b5563;margin-bottom:4px;">Key Risk Factors</div>
     <div style="font-size:11px;color:#d1d5db;line-height:1.6;">{key_factors}</div>
-  </div>
-  <div style="border-top:1px solid #1f2937;padding-top:6px;font-size:10px;color:#374151;">Zone: {hex_id}</div>
+  </div>""" if has_drivers else ""
+
+tooltip = {
+    "html": f"""
+<div style="font-family:DM Sans,sans-serif;padding:13px 15px;min-width:210px;">
+  <div style="font-size:1.1rem;font-weight:800;color:{{risk_color_hex}};margin-bottom:2px;">{{risk_level_display}}</div>
+  <div style="font-size:1.5rem;font-weight:700;color:#f1f5f9;margin-bottom:10px;">{{fire_risk_pct}} fire risk</div>
+  {_drivers_html}
+  <div style="border-top:1px solid #1f2937;padding-top:6px;font-size:10px;color:#374151;">Zone: {{hex_id}}</div>
 </div>""",
     "style": {"backgroundColor": "#111827", "color": "#e5e7eb", "borderRadius": "8px", "padding": "0"}
 }
@@ -509,6 +516,15 @@ with brief_col:
         st.markdown(
             f'<div class="priority-actions">'
             f'<div class="pa-head">⚡ Priority Actions</div>{items_html}</div>',
+            unsafe_allow_html=True
+        )
+
+    # Empty state for low-risk dates
+    if not active_clusters:
+        st.markdown(
+            '<div class="bc-ok"><div class="bc-head">🟢 No Significant Risk Areas</div>'
+            '<div class="bc-body">No significant risk areas identified for this date. '
+            'Statewide conditions are within normal range.</div></div>',
             unsafe_allow_html=True
         )
 
@@ -610,13 +626,6 @@ with brief_col:
 with chat_col:
     st.markdown("#### Ask a Question")
     st.caption("Ask questions about current fire risk")
-
-    if st.session_state.get('_chat_date') != selected_date:
-        st.session_state.messages = [{
-            "role": "assistant",
-            "content": "I can answer questions about current fire risk, evacuation planning, and resource staging for any region in California."
-        }]
-        st.session_state['_chat_date'] = selected_date
 
     chat_container = st.container(height=400)
     with chat_container:
