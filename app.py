@@ -208,12 +208,13 @@ def load_rag_context():
         return f.read()
 
 @st.cache_data
-def load_data(date_key):
-    base = f'{SNAPSHOTS_DIR}/{date_key}'
-    predictions = pd.read_csv(f'{base}/predictions_with_risk.csv')
-    with open(f'{base}/clusters.json')      as f: clusters      = json.load(f)
-    with open(f'{base}/briefing.json')      as f: briefing      = json.load(f)
-    with open(f'{base}/chatbot_context.txt') as f: chatbot_ctx  = f.read()
+def load_date_data(date_str):
+    date_dir = f'{SNAPSHOTS_DIR}/{date_str}'
+    predictions = pd.read_csv(f'{date_dir}/predictions_with_risk.csv')
+    predictions['color'] = predictions['risk_level'].apply(risk_to_color)
+    with open(f'{date_dir}/clusters.json')       as f: clusters     = json.load(f)
+    with open(f'{date_dir}/briefing.json')       as f: briefing     = json.load(f)
+    with open(f'{date_dir}/chatbot_context.txt') as f: chatbot_ctx  = f.read()
     return predictions, clusters, briefing, chatbot_ctx
 
 def format_date_label(entry):
@@ -300,7 +301,8 @@ with st.sidebar:
     selected_date = selected_entry['date']
 
     try:
-        predictions, clusters, briefing, chatbot_ctx = load_data(selected_date)
+        with st.spinner("Loading forecast..."):
+            predictions, clusters, briefing, chatbot_ctx = load_date_data(selected_date)
     except FileNotFoundError as e:
         st.error(f"Missing file: {e.filename}")
         st.stop()
@@ -374,8 +376,6 @@ map_data['risk_color_hex']     = map_data['risk_level'].map(RISK_COLOR_HEX).fill
 map_data['key_factors']        = map_data.apply(build_key_factors, axis=1)
 map_data['color']              = map_data['risk_level'].apply(
     lambda lvl: [30, 35, 45, 35] if lvl == 'NO_DATA' else risk_to_color(lvl))
-
-predictions['color'] = predictions['risk_level'].apply(risk_to_color)
 
 cluster_stats_by_label = {c['label']: c for c in clusters}
 
