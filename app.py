@@ -32,7 +32,7 @@ st.markdown("""
     .mc-red    { background: #2a0f11; } .mc-red    .label { color: #f87171; } .mc-red    .value { color: #fca5a5; }
     .mc-orange { background: #2a1a0a; } .mc-orange .label { color: #fb923c; } .mc-orange .value { color: #fdba74; }
     .mc-yellow { background: #2a250a; } .mc-yellow .label { color: #facc15; } .mc-yellow .value { color: #fde68a; }
-    .mc-green  { background: #0a2a16; } .mc-green  .label { color: #4ade80; } .mc-green  .value { color: #86efac; }
+    .mc-green  { background: #0a1f1f; } .mc-green  .label { color: #2dd4bf; } .mc-green  .value { color: #99f6e4; }
     .mc-gray   { background: #1a1a1a; } .mc-gray   .label { color: #9ca3af; } .mc-gray   .value { color: #d1d5db; }
     .priority-actions { background: #1a0e05; border: 1px solid rgba(234,88,12,0.4); border-left: 4px solid #ea580c; border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; }
     .priority-actions .pa-head { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #fb923c; margin-bottom: 8px; }
@@ -67,11 +67,11 @@ st.markdown("""
 SNAPSHOTS_DIR = 'date_snapshots'
 
 RISK_DISPLAY = {
-    'VERY_HIGH': 'Very High',
-    'HIGH':      'High',
-    'MODERATE':  'Moderate',
-    'LOW':       'Low',
-    'NONE':      'None',
+    'VERY_HIGH': 'Extreme',
+    'HIGH':      'Very High',
+    'MODERATE':  'High',
+    'LOW':       'Moderate',
+    'NONE':      'Low',
     'NO_DATA':   'No Data',
 }
 
@@ -79,8 +79,8 @@ RISK_COLOR_HEX = {
     'VERY_HIGH': '#dc2626',
     'HIGH':      '#ea580c',
     'MODERATE':  '#d97706',
-    'LOW':       '#6b7e32',
-    'NONE':      '#374151',
+    'LOW':       '#0d9488',
+    'NONE':      '#6b7280',
     'NO_DATA':   '#1e2330',
 }
 
@@ -177,7 +177,7 @@ def clean_text(text):
     """Remove residual jargon from AI-generated summaries."""
     for old, new in [
         ('hexagons', 'zones'), ('hexagon', 'zone'),
-        ('VERY_HIGH', 'Very High'), ('NO_RISK', 'None'), ('NONE', 'None'),
+        ('VERY_HIGH', 'Extreme'), ('NO_RISK', 'Low'), ('NONE', 'Low'),
         ('SHAP', 'AI-identified'), ('LightGBM', 'AI system'),
         ('Random Forest', 'AI system'),
     ]:
@@ -223,10 +223,11 @@ def format_date_label(entry):
 
 def risk_to_color(level):
     return {
-        'VERY_HIGH': [220, 38,  38,  230],
-        'HIGH':      [234, 88,  12,  200],
-        'MODERATE':  [234, 159, 8,   130],
-        'LOW':       [120, 150, 50,   60],
+        'VERY_HIGH': [220,  38,  38, 230],
+        'HIGH':      [234,  88,  12, 200],
+        'MODERATE':  [217, 119,   6, 160],
+        'LOW':       [ 13, 148, 136, 120],
+        'NONE':      [107, 114, 128,  70],
     }.get(level, [30, 35, 45, 35])
 
 def build_briefing_download(forecast_date, n_vh, n_h, n_m, n_l, n_none,
@@ -239,11 +240,11 @@ def build_briefing_download(forecast_date, n_vh, n_h, n_m, n_l, n_none,
         "STATEWIDE SITUATION",
         "=" * 52,
         clean_text(briefing.get('overall_assessment', '')), "",
-        f"  Very High risk zones : {n_vh:,}",
-        f"  High risk zones      : {n_h:,}",
-        f"  Moderate risk zones  : {n_m:,}",
-        f"  Low risk zones       : {n_l:,}",
-        f"  No significant risk  : {n_none:,}",
+        f"  Extreme risk zones   : {n_vh:,}",
+        f"  Very High risk zones : {n_h:,}",
+        f"  High risk zones      : {n_m:,}",
+        f"  Moderate risk zones  : {n_l:,}",
+        f"  Low risk zones       : {n_none:,}",
         "",
     ]
     for i, cb in enumerate(briefing.get('clusters', []), 1):
@@ -344,10 +345,10 @@ with st.sidebar:
 
     st.markdown("**Display on map:**")
     _level_opts = [
-        ('VERY_HIGH', 'Very High', True),
-        ('HIGH',      'High',      True),
-        ('MODERATE',  'Moderate',  False),
-        ('LOW',       'Low',       False),
+        ('VERY_HIGH', 'Extreme',   True),
+        ('HIGH',      'Very High', True),
+        ('MODERATE',  'High',      False),
+        ('LOW',       'Moderate',  False),
     ]
     show_levels = [code for code, lbl, default in _level_opts
                    if st.checkbox(lbl, value=default, key=f"cb_{code}")]
@@ -400,18 +401,18 @@ regions_str = ' and '.join(top_regions) if top_regions else 'multiple regions'
 if n_vh > 0 and active_clusters:
     situation_text = (
         f"{len(active_clusters)} active risk area{'s' if len(active_clusters) != 1 else ''} "
-        f"requiring immediate attention \u2014 {n_vh:,} zones at Very High risk, "
+        f"requiring immediate attention \u2014 {n_vh:,} zones at Extreme risk, "
         f"concentrated in {regions_str}."
     )
     callout_class = "situation-callout"
 elif n_h > 0 and active_clusters:
     situation_text = (
         f"{len(active_clusters)} area{'s' if len(active_clusters) != 1 else ''} at elevated risk \u2014 "
-        f"{n_h:,} zones at High risk across {regions_str}."
+        f"{n_h:,} zones at Very High risk across {regions_str}."
     )
     callout_class = "situation-callout"
 else:
-    situation_text = "No Very High or High risk zones detected. Statewide conditions are within normal range."
+    situation_text = "No Extreme or Very High risk zones detected. Statewide conditions are within normal range."
     callout_class = "situation-callout calm"
 
 st.markdown(f'<div class="{callout_class}"><p>{situation_text}</p></div>', unsafe_allow_html=True)
@@ -419,11 +420,11 @@ st.markdown(f'<div class="{callout_class}"><p>{situation_text}</p></div>', unsaf
 # ── METRIC CARDS ──
 st.markdown(f"""
 <div class="metric-row">
-    <div class="metric-card mc-red">   <div class="label">Very High</div><div class="value">{n_vh}</div></div>
-    <div class="metric-card mc-orange"><div class="label">High</div>     <div class="value">{n_h}</div></div>
-    <div class="metric-card mc-yellow"><div class="label">Moderate</div> <div class="value">{n_m}</div></div>
-    <div class="metric-card mc-green"> <div class="label">Low</div>      <div class="value">{n_l}</div></div>
-    <div class="metric-card mc-gray">  <div class="label">None</div>     <div class="value">{n_none}</div></div>
+    <div class="metric-card mc-red">   <div class="label">Extreme</div>  <div class="value">{n_vh}</div></div>
+    <div class="metric-card mc-orange"><div class="label">Very High</div><div class="value">{n_h}</div></div>
+    <div class="metric-card mc-yellow"><div class="label">High</div>     <div class="value">{n_m}</div></div>
+    <div class="metric-card mc-green"> <div class="label">Moderate</div> <div class="value">{n_l}</div></div>
+    <div class="metric-card mc-gray">  <div class="label">Low</div>      <div class="value">{n_none}</div></div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -473,10 +474,10 @@ st.pydeck_chart(
 )
 st.markdown(
     '<div class="legend">'
-    '<div class="legend-item"><div class="legend-dot" style="background:#dc2626;"></div>Very High</div>'
-    '<div class="legend-item"><div class="legend-dot" style="background:#ea580c;"></div>High</div>'
-    '<div class="legend-item"><div class="legend-dot" style="background:#d97706;opacity:0.8;"></div>Moderate</div>'
-    '<div class="legend-item"><div class="legend-dot" style="background:#6b7e32;opacity:0.5;"></div>Low</div>'
+    '<div class="legend-item"><div class="legend-dot" style="background:#dc2626;"></div>Extreme</div>'
+    '<div class="legend-item"><div class="legend-dot" style="background:#ea580c;"></div>Very High</div>'
+    '<div class="legend-item"><div class="legend-dot" style="background:#d97706;opacity:0.9;"></div>High</div>'
+    '<div class="legend-item"><div class="legend-dot" style="background:#0d9488;opacity:0.7;"></div>Moderate</div>'
     '<div class="legend-item"><div class="legend-dot" style="background:#1e2330;opacity:0.8;"></div>No data</div>'
     '</div>',
     unsafe_allow_html=True
@@ -541,7 +542,7 @@ with brief_col:
         icon         = '🔴' if has_very_high else '🟠'
         border_color = '#dc2626' if has_very_high else '#ea580c'
         bg_color     = '#1f0d0d' if has_very_high else '#1f160e'
-        risk_label   = 'Very High' if has_very_high else RISK_DISPLAY.get(level, level)
+        risk_label   = 'Extreme' if has_very_high else RISK_DISPLAY.get(level, level)
         zone_count   = stats.get('n_hexes', None)
         zone_tag     = f" · {zone_count:,} zones" if zone_count else ""
 
@@ -695,8 +696,8 @@ with chat_col:
                 "RULES:\n"
                 "- Use plain language. Avoid technical jargon.\n"
                 "- Cite specific numbers from the forecast data.\n"
-                "- Risk levels: Low (under 28% probability), Moderate (28–51%), High (51–77%), Very High (over 77%).\n"
-                "- Very High means 77–100% probability — the system is highly confident fire conditions are present.\n"
+                "- Risk levels: Low (under 13% probability), Moderate (13–28%), High (28–51%), Very High (51–77%), Extreme (over 77%).\n"
+                "- Extreme means 77–100% probability — the system is highly confident fire conditions are present.\n"
                 "- When geographic location is a factor, note the area has a history of fire activity.\n"
                 "- Reference CAL FIRE procedures for operational questions.\n"
                 "- 2–4 paragraphs max. Be direct and actionable."
@@ -744,23 +745,23 @@ with st.expander("How to read this dashboard"):
     st.markdown("""
 <div class="help-box">
 <div class="risk-row">
-  <span class="risk-badge" style="background:#2a0f11;color:#fca5a5;">Very High</span>
+  <span class="risk-badge" style="background:#2a0f11;color:#fca5a5;">Extreme</span>
   <span><strong>Over 77% probability of fire ignition or spread</strong> in the 14-day window. The AI system is highly confident that conditions are dangerous. Immediate pre-positioning of resources and community alerts are warranted.</span>
 </div>
 <div class="risk-row">
-  <span class="risk-badge" style="background:#2a1a0a;color:#fdba74;">High</span>
+  <span class="risk-badge" style="background:#2a1a0a;color:#fdba74;">Very High</span>
   <span><strong>51–77% probability.</strong> Serious fire conditions expected. Confirm resource availability, review evacuation routes, and consider issuing readiness notices to affected communities.</span>
 </div>
 <div class="risk-row">
-  <span class="risk-badge" style="background:#2a250a;color:#fde68a;">Moderate</span>
+  <span class="risk-badge" style="background:#2a250a;color:#fde68a;">High</span>
   <span><strong>28–51% probability.</strong> Above-normal conditions. Maintain heightened situational awareness and ensure standard readiness posture.</span>
 </div>
 <div class="risk-row">
-  <span class="risk-badge" style="background:#0a2a16;color:#86efac;">Low</span>
+  <span class="risk-badge" style="background:#0a1f1f;color:#99f6e4;">Moderate</span>
   <span><strong>13–28% probability.</strong> Some elevated factors present but conditions are broadly manageable. Standard monitoring applies.</span>
 </div>
 <div class="risk-row">
-  <span class="risk-badge" style="background:#1a1a1a;color:#9ca3af;">None</span>
+  <span class="risk-badge" style="background:#1a1a1a;color:#9ca3af;">Low</span>
   <span><strong>Under 13% probability.</strong> No meaningful fire risk detected for this zone. Not shown on the map.</span>
 </div>
 
