@@ -347,18 +347,16 @@ with st.sidebar:
     _level_opts = [
         ('VERY_HIGH', 'Extreme',   True),
         ('HIGH',      'Very High', True),
-        ('MODERATE',  'High',      False),
-        ('LOW',       'Moderate',  False),
+        ('MODERATE',  'High',      True),
+        ('LOW',       'Moderate',  True),
+        ('NONE',      'Low',       True),
     ]
     show_levels = [code for code, lbl, default in _level_opts
                    if st.checkbox(lbl, value=default, key=f"cb_{code}")]
     map_opacity  = st.slider("Opacity", 0.3, 1.0, 0.8, 0.05)
-    elevation_3d = st.checkbox("3D elevation", value=False)
     st.divider()
 
-    groq_key = st.text_input("AI Assistant Key", type="password", help="Required for live Q&A")
-    if groq_key:
-        st.success("Key set", icon="✅")
+    groq_key = st.secrets.get("GROQ_API_KEY", "")
     st.caption("WildfireWatch AI · 2025")
 
 # ── DATA PREP ──
@@ -441,8 +439,6 @@ filtered = map_data[map_data['risk_level'].isin(show_levels)]
 hex_layer = pdk.Layer(
     "H3HexagonLayer",
     data=filtered, get_hexagon="hex_id", get_fill_color="color",
-    get_elevation="predicted_probability" if elevation_3d else None,
-    elevation_scale=250000 if elevation_3d else 0, extruded=elevation_3d,
     opacity=map_opacity, pickable=True, auto_highlight=True,
 )
 
@@ -686,7 +682,7 @@ with chat_col:
         if not groq_key:
             st.session_state.messages.append({
                 "role": "assistant",
-                "content": "Enter your AI Assistant Key in the sidebar to enable live responses."
+                "content": "AI Assistant is not configured. Please set the GROQ_API_KEY in Streamlit secrets to enable live responses."
             })
         else:
             system_prompt = (
