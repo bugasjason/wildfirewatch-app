@@ -349,7 +349,7 @@ with st.sidebar:
         ('HIGH',      'Very High', True),
         ('MODERATE',  'High',      True),
         ('LOW',       'Moderate',  True),
-        ('NONE',      'Low',       True),
+        ('NONE',      'Low',       False),
     ]
     show_levels = [code for code, lbl, default in _level_opts
                    if st.checkbox(lbl, value=default, key=f"cb_{code}")]
@@ -688,6 +688,25 @@ with chat_col:
             system_prompt = (
                 "You are the WildfireWatch AI assistant helping emergency management personnel and government officials "
                 "understand wildfire risk in California. Speak plainly — your audience is fire chiefs and elected officials, not data scientists.\n\n"
+                "CALIFORNIA CITY REFERENCE:\n"
+                "When users ask about a city, relate it to the nearest monitoring zones and clusters:\n"
+                "- Los Angeles / LA: San Gabriel Mountains, NE Los Angeles County, San Bernardino Mountains areas\n"
+                "- San Francisco / SF / Bay Area: San Francisco Bay Area zones, extends to Marin and East Bay\n"
+                "- Sacramento: Central Valley zones north of the Sacramento area\n"
+                "- San Diego: Southernmost California zones near the Mexican border\n"
+                "- San Jose / Silicon Valley: Southern San Francisco Bay Area zones\n"
+                "- Fresno / Central Valley: Southern Central Valley zones\n"
+                "- Santa Barbara: Santa Barbara / Ventura coastal and mountain zones\n"
+                "- Palm Springs / Riverside: Riverside / San Jacinto zones, eastern desert areas\n"
+                "- Redding / Red Bluff: Shasta-Trinity Region zones\n"
+                "- Paradise / Chico: Butte County / Paradise zones\n"
+                "- Lake Tahoe / South Lake Tahoe: Lake Tahoe / El Dorado zones\n"
+                "- Santa Cruz / Monterey: Central coast zones west of the Central Valley\n"
+                "- Bakersfield: Southern Central Valley, Sequoia National Forest foothills\n"
+                "- Ventura / Oxnard: Santa Barbara / Ventura zones\n"
+                "When answering about a specific city, reference the relevant cluster if one is active near that city. "
+                "If no cluster is active near that city, say so explicitly — "
+                "\"There are no active risk clusters near [city] for this forecast date.\"\n\n"
                 f"REFERENCE DOCUMENTATION:\n{rag_context}\n\n"
                 "RULES:\n"
                 "- Use plain language. Avoid technical jargon.\n"
