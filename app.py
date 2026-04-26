@@ -59,7 +59,6 @@ st.markdown("""
     .block-container h4 { font-size: 1.15rem !important; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 0.6rem; }
     div[data-testid="stButton"] > button { border-radius: 8px !important; }
     [data-testid="stSidebar"] { background: #0d1117; }
-    [data-testid="collapsedControl"], [data-testid="stSidebarCollapsedControl"] { display: none !important; }
     section[data-testid="stSidebar"] { min-width: 280px !important; }
 </style>
 """, unsafe_allow_html=True)
