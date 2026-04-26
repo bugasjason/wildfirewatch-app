@@ -55,7 +55,7 @@ st.markdown("""
     .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
     .help-box .risk-row { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.83rem; color: #d1d5db; line-height: 1.6; }
     .help-box .risk-badge { font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; min-width: 70px; text-align: center; white-space: nowrap; }
-    #MainMenu {display: none;} footer {display: none;} [data-testid="stToolbar"] {display: none;}
+    #MainMenu {display: none;} footer {display: none;}
     .block-container h4 { font-size: 1.15rem !important; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 0.6rem; }
     div[data-testid="stButton"] > button { border-radius: 8px !important; }
     [data-testid="stSidebar"] { background: #0d1117; }
