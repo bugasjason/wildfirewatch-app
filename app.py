@@ -4,6 +4,7 @@ WildfireWatch AI — Streamlit Dashboard v4
 Run:  streamlit run app.py
 """
 
+import math
 import streamlit as st
 import pandas as pd
 import pydeck as pdk
@@ -148,6 +149,21 @@ PLAIN_ENGLISH = {
     'doy_cos':                'day of year',
 }
 
+CITY_COORDS = {
+    'Los Angeles':      (34.05, -118.24),
+    'San Francisco':    (37.77, -122.42),
+    'Sacramento':       (38.58, -121.49),
+    'San Diego':        (32.72, -117.16),
+    'San Jose':         (37.34, -121.89),
+    'Fresno':           (36.74, -119.77),
+    'Redding':          (40.59, -122.39),
+    'Santa Barbara':    (34.42, -119.70),
+    'Palm Springs':     (33.83, -116.55),
+    'Bakersfield':      (35.37, -119.02),
+    'Paradise':         (39.76, -121.62),
+    'South Lake Tahoe': (38.94, -119.98),
+}
+
 def translate_feature(feat):
     return PLAIN_ENGLISH.get(feat, feat.replace('_', ' '))
 
@@ -182,6 +198,73 @@ def clean_text(text):
     ]:
         text = text.replace(old, new)
     return text
+
+def build_isolated_zones_context(predictions, clusters, n=10):
+    """Return context text for HIGH/VERY_HIGH zones not near any cluster center."""
+    elevated = predictions[predictions['risk_level'].isin(['VERY_HIGH', 'HIGH'])].copy()
+    if elevated.empty or 'lat' not in elevated.columns:
+        return ""
+    cluster_centers = [(c['center_lat'], c['center_lon']) for c in clusters if 'center_lat' in c]
+    def min_dist(row):
+        if not cluster_centers:
+            return float('inf')
+        return min(math.sqrt((row['lat'] - clat)**2 + (row['lon'] - clon)**2)
+                   for clat, clon in cluster_centers)
+    elevated['_min_dist'] = elevated.apply(min_dist, axis=1)
+    isolated = elevated[elevated['_min_dist'] > 1.0].sort_values('predicted_probability', ascending=False)
+    if isolated.empty:
+        return "\nISOLATED HIGH-RISK ZONES:\nNone — all elevated zones are part of or adjacent to named clusters.\n"
+    lines = ["\nISOLATED HIGH-RISK ZONES (not part of any named cluster):"]
+    for _, row in isolated.head(n).iterrows():
+        level   = RISK_DISPLAY.get(row['risk_level'], row['risk_level'])
+        factors = build_key_factors(row, n=3)
+        lines.append(
+            f"  Zone {row['hex_id']} — lat {row['lat']:.2f}, lon {row['lon']:.2f} | "
+            f"{level} | {row['predicted_probability']*100:.1f}% fire risk | "
+            f"Key factors: {factors}"
+        )
+    return '\n'.join(lines) + '\n'
+
+def build_city_context(predictions, n_nearest=5):
+    """Return context text summarising risk for zones nearest to major CA cities."""
+    if 'lat' not in predictions.columns:
+        return ""
+    lines = ["\nCITY-LEVEL CONDITIONS:"]
+    for city, (clat, clon) in CITY_COORDS.items():
+        preds = predictions.copy()
+        preds['_dist'] = preds.apply(
+            lambda r: math.sqrt((r['lat'] - clat)**2 + (r['lon'] - clon)**2), axis=1
+        )
+        nearest = preds.nsmallest(n_nearest, '_dist')
+        if nearest.empty:
+            continue
+        avg_risk = nearest['predicted_probability'].mean() * 100
+        max_risk = nearest['predicted_probability'].max() * 100
+        min_risk = nearest['predicted_probability'].min() * 100
+        level_counts = nearest['risk_level'].value_counts()
+        level_parts = [
+            f"{level_counts[lvl]} at {RISK_DISPLAY[lvl]}"
+            for lvl in ['VERY_HIGH', 'HIGH', 'MODERATE', 'LOW', 'NONE']
+            if level_counts.get(lvl, 0) > 0
+        ]
+        all_factors = []
+        for _, row in nearest.iterrows():
+            f = build_key_factors(row, n=2)
+            if f and f != '—':
+                all_factors.extend(f.split(', '))
+        seen, unique_factors = set(), []
+        for f in all_factors:
+            if f not in seen:
+                seen.add(f)
+                unique_factors.append(f)
+        levels_str  = ', '.join(level_parts) if level_parts else 'Low'
+        factors_str = ', '.join(unique_factors[:3]) if unique_factors else '—'
+        lines.append(
+            f"  {city.upper()}: {n_nearest} nearest zones — "
+            f"avg fire risk {avg_risk:.0f}%, range {min_risk:.0f}%–{max_risk:.0f}% "
+            f"({levels_str}). Key drivers: {factors_str}."
+        )
+    return '\n'.join(lines) + '\n'
 
 # ── CACHED LOADERS ──
 
@@ -706,6 +789,9 @@ with chat_col:
                 "When answering about a specific city, reference the relevant cluster if one is active near that city. "
                 "If no cluster is active near that city, say so explicitly — "
                 "\"There are no active risk clusters near [city] for this forecast date.\"\n\n"
+                "ISOLATED ZONES: If a user asks about an area that doesn't match any named cluster, "
+                "check the ISOLATED HIGH-RISK ZONES section in the forecast data and respond with "
+                "that specific zone's location, probability, and key factors.\n\n"
                 f"REFERENCE DOCUMENTATION:\n{rag_context}\n\n"
                 "RULES:\n"
                 "- Use plain language. Avoid technical jargon.\n"
@@ -716,7 +802,12 @@ with chat_col:
                 "- Reference CAL FIRE procedures for operational questions.\n"
                 "- 2–4 paragraphs max. Be direct and actionable."
             )
-            user_msg = f"Current forecast data:\n\n{chatbot_ctx}\n\nQuestion: {question}"
+            user_msg = (
+                f"Current forecast data:\n\n{chatbot_ctx}"
+                f"{build_isolated_zones_context(predictions, clusters)}"
+                f"{build_city_context(predictions)}"
+                f"\n\nQuestion: {question}"
+            )
             try:
                 client   = Groq(api_key=groq_key)
                 response = client.chat.completions.create(
