@@ -375,13 +375,15 @@ with st.sidebar:
     st.caption("14-Day Wildfire Risk Forecast")
     st.divider()
 
-    selected_entry = st.selectbox(
+    _date_options = [e['date'] for e in date_index]
+    selected_date = st.selectbox(
         "Forecast date",
-        date_index,
+        _date_options,
         index=_default_idx,
-        format_func=format_date_label,
+        format_func=lambda d: format_date_label(next(e for e in date_index if e['date'] == d)),
+        key='forecast_date',
     )
-    selected_date = selected_entry['date']
+    selected_entry = next(e for e in date_index if e['date'] == selected_date)
 
     if 'current_date' not in st.session_state or st.session_state.current_date != selected_date:
         st.session_state.messages = [{"role": "assistant", "content": "Ask me about current fire risk, evacuation planning, or resource staging for any region."}]
@@ -588,8 +590,16 @@ with brief_col:
         use_container_width=True,
     )
 
-    # Priority Actions — first action from each cluster, up to 4
-    priority_actions = [cb['actions'][0] for cb in active_clusters if cb.get('actions')][:4]
+    # Priority Actions — one distinct action per cluster, up to 4, deduped
+    _seen_actions, priority_actions = set(), []
+    for cb in active_clusters:
+        for action in cb.get('actions', []):
+            if action not in _seen_actions:
+                _seen_actions.add(action)
+                priority_actions.append(action)
+                break
+        if len(priority_actions) >= 4:
+            break
     if priority_actions:
         items_html = ''.join(f'<div class="pa-item">{a}</div>' for a in priority_actions)
         st.markdown(
