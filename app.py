@@ -299,6 +299,53 @@ def load_date_data(date_str):
     with open(f'{date_dir}/chatbot_context.txt') as f: chatbot_ctx  = f.read()
     return predictions, clusters, briefing, chatbot_ctx
 
+@st.cache_data
+def prep_date_data(date_str):
+    """Load, normalize, and build map_data for a date. Cached per date so
+    checkbox/slider reruns don't redo the merge or key-factors apply."""
+    predictions, clusters, briefing, chatbot_ctx = load_date_data(date_str)
+
+    predictions = predictions.copy()
+    if 'predicted_probability' not in predictions.columns:
+        predictions['predicted_probability'] = (
+            predictions['fire_probability'] if 'fire_probability' in predictions.columns else 0.0
+        )
+
+    driver_feat_cols = sorted(
+        [c for c in predictions.columns if c.startswith('driver_') and c.endswith('_feature')],
+        key=lambda c: int(c.split('_')[1]),
+    )
+    driver_shap_cols = sorted(
+        [c for c in predictions.columns if c.startswith('driver_') and c.endswith('_shap')],
+        key=lambda c: int(c.split('_')[1]),
+    )
+
+    forecast_date = predictions['date'].iloc[0] if 'date' in predictions.columns else date_str
+    n_vh   = int((predictions['risk_level'] == 'VERY_HIGH').sum())
+    n_h    = int((predictions['risk_level'] == 'HIGH').sum())
+    n_m    = int((predictions['risk_level'] == 'MODERATE').sum())
+    n_l    = int((predictions['risk_level'] == 'LOW').sum())
+    n_none = int((predictions['risk_level'] == 'NONE').sum())
+
+    ca_base = load_ca_base()
+    merge_cols = [c for c in
+                  ['hex_id', 'predicted_probability', 'risk_level']
+                  + driver_feat_cols[:3] + driver_shap_cols[:3]
+                  if c in predictions.columns]
+    map_data = ca_base.merge(predictions[merge_cols], on='hex_id', how='left')
+    map_data['risk_level']            = map_data['risk_level'].fillna('NO_DATA')
+    map_data['predicted_probability'] = map_data['predicted_probability'].fillna(0.0)
+    map_data['fire_risk_pct']         = (map_data['predicted_probability'] * 100).round(1).astype(str) + '%'
+    map_data['risk_level_display']    = map_data['risk_level'].map(RISK_DISPLAY).fillna(map_data['risk_level'])
+    map_data['risk_color_hex']        = map_data['risk_level'].map(RISK_COLOR_HEX).fillna('#374151')
+    map_data['key_factors']           = map_data.apply(build_key_factors, axis=1)
+    map_data['color']                 = map_data['risk_level'].apply(
+        lambda lvl: [30, 35, 45, 35] if lvl == 'NO_DATA' else risk_to_color(lvl))
+
+    return (predictions, clusters, briefing, chatbot_ctx,
+            driver_feat_cols, driver_shap_cols, forecast_date,
+            n_vh, n_h, n_m, n_l, n_none, map_data)
+
 def format_date_label(entry):
     dt = datetime.strptime(entry['date'], '%Y-%m-%d')
     return f"{dt.strftime('%b %-d, %Y')} \u2014 {entry['label']}"
@@ -390,35 +437,14 @@ with st.sidebar:
         st.session_state.current_date = selected_date
 
     try:
-        with st.spinner("Loading forecast..."):
-            predictions, clusters, briefing, chatbot_ctx = load_date_data(selected_date)
+        (predictions, clusters, briefing, chatbot_ctx,
+         _driver_feat_cols, _driver_shap_cols, forecast_date,
+         n_vh, n_h, n_m, n_l, n_none, map_data) = prep_date_data(selected_date)
     except FileNotFoundError as e:
         st.error(f"Missing file: {e.filename}")
         st.stop()
 
-    # ── COLUMN NORMALIZATION ──
-    # Normalize probability column so the rest of the app always uses 'predicted_probability'
-    predictions = predictions.copy()
-    if 'predicted_probability' not in predictions.columns:
-        if 'fire_probability' in predictions.columns:
-            predictions['predicted_probability'] = predictions['fire_probability']
-        else:
-            predictions['predicted_probability'] = 0.0
-
-    # Detect driver columns (handles both old top_3_drivers and new driver_N_feature/shap formats)
-    _driver_feat_cols = sorted([c for c in predictions.columns if c.startswith('driver_') and c.endswith('_feature')],
-                               key=lambda c: int(c.split('_')[1]))
-    _driver_shap_cols = sorted([c for c in predictions.columns if c.startswith('driver_') and c.endswith('_shap')],
-                               key=lambda c: int(c.split('_')[1]))
     has_drivers = len(_driver_feat_cols) > 0
-
-    forecast_date = predictions['date'].iloc[0] if 'date' in predictions.columns else selected_date
-
-    n_vh   = int((predictions['risk_level'] == 'VERY_HIGH').sum()) if 'risk_level' in predictions.columns else 0
-    n_h    = int((predictions['risk_level'] == 'HIGH').sum())      if 'risk_level' in predictions.columns else 0
-    n_m    = int((predictions['risk_level'] == 'MODERATE').sum())  if 'risk_level' in predictions.columns else 0
-    n_l    = int((predictions['risk_level'] == 'LOW').sum())       if 'risk_level' in predictions.columns else 0
-    n_none = int((predictions['risk_level'] == 'NONE').sum())      if 'risk_level' in predictions.columns else 0
 
     st.divider()
     st.markdown(f"**Forecast date:** {forecast_date}")
@@ -442,27 +468,6 @@ with st.sidebar:
 
     groq_key = st.secrets.get("GROQ_API_KEY", "")
     st.caption("WildfireWatch AI · 2025")
-
-# ── DATA PREP ──
-ca_base = load_ca_base()
-
-# Merge predictions onto CA base for full state coverage
-# Only include columns that actually exist in this CSV
-_merge_cols = [c for c in
-               ['hex_id', 'predicted_probability', 'risk_level']
-               + _driver_feat_cols[:3] + _driver_shap_cols[:3]
-               if c in predictions.columns]
-map_data = ca_base.merge(predictions[_merge_cols], on='hex_id', how='left')
-map_data['risk_level']            = map_data['risk_level'].fillna('NO_DATA') if 'risk_level' in map_data.columns else 'NO_DATA'
-map_data['predicted_probability'] = map_data['predicted_probability'].fillna(0.0) if 'predicted_probability' in map_data.columns else 0.0
-
-# Pre-compute display columns for tooltip
-map_data['fire_risk_pct']      = (map_data['predicted_probability'] * 100).round(1).astype(str) + '%'
-map_data['risk_level_display'] = map_data['risk_level'].map(RISK_DISPLAY).fillna(map_data['risk_level'])
-map_data['risk_color_hex']     = map_data['risk_level'].map(RISK_COLOR_HEX).fillna('#374151')
-map_data['key_factors']        = map_data.apply(build_key_factors, axis=1)
-map_data['color']              = map_data['risk_level'].apply(
-    lambda lvl: [30, 35, 45, 35] if lvl == 'NO_DATA' else risk_to_color(lvl))
 
 cluster_stats_by_label = {c['label']: c for c in clusters}
 
