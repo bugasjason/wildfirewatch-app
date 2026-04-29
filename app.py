@@ -16,50 +16,173 @@ st.set_page_config(page_title="WildfireWatch AI", page_icon="🔥", layout="wide
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
-    .block-container { padding-top: 1rem; padding-bottom: 1rem; }
+    .block-container { padding-top: 1.2rem; padding-bottom: 2rem; max-width: 1400px; }
     html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
-    .app-header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 1.1rem 1.5rem; border-radius: 12px; margin-bottom: 0.6rem; }
-    .app-title { color: #fff; font-size: 1.5rem; font-weight: 700; margin: 0; }
-    .app-subtitle { color: rgba(255,255,255,0.55); font-size: 0.82rem; margin: 0; }
-    .situation-callout { background: #1f0d0d; border-left: 5px solid #dc2626; border-radius: 0 10px 10px 0; padding: 13px 18px; margin-bottom: 0.8rem; }
-    .situation-callout.calm { background: #0d1f14; border-left-color: #22c55e; }
-    .situation-callout p { font-size: 1.0rem; font-weight: 600; color: #fca5a5; margin: 0; line-height: 1.45; }
-    .situation-callout.calm p { color: #86efac; }
-    .metric-row { display: flex; gap: 10px; margin-bottom: 0.8rem; }
-    .metric-card { flex: 1; padding: 16px 14px; border-radius: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.06); }
-    .metric-card .label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
-    .metric-card .value { font-size: 1.7rem; font-weight: 700; line-height: 1.1; }
-    .mc-red    { background: #2a0f11; } .mc-red    .label { color: #f87171; } .mc-red    .value { color: #fca5a5; }
-    .mc-orange { background: #2a1a0a; } .mc-orange .label { color: #fb923c; } .mc-orange .value { color: #fdba74; }
-    .mc-yellow { background: #2a250a; } .mc-yellow .label { color: #facc15; } .mc-yellow .value { color: #fde68a; }
-    .mc-green  { background: #0a1f1f; } .mc-green  .label { color: #2dd4bf; } .mc-green  .value { color: #99f6e4; }
-    .mc-gray   { background: #1a1a1a; } .mc-gray   .label { color: #9ca3af; } .mc-gray   .value { color: #d1d5db; }
+
+    /* HEADER — bigger, warmer fire-to-night gradient */
+    .app-header {
+        background: linear-gradient(135deg, #7c1d1d 0%, #2a0f11 30%, #16213e 70%, #0f3460 100%);
+        padding: 1.5rem 1.8rem;
+        border-radius: 14px;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.35), 0 1px 0 rgba(255,255,255,0.06) inset;
+        position: relative;
+        overflow: hidden;
+    }
+    .app-header::before {
+        content: ""; position: absolute; top: 0; right: 0; width: 240px; height: 100%;
+        background: radial-gradient(ellipse at top right, rgba(234,88,12,0.18) 0%, transparent 70%);
+        pointer-events: none;
+    }
+    .app-title-row { display: flex; align-items: center; gap: 12px; position: relative; }
+    .app-icon { font-size: 1.9rem; line-height: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+    .app-title { color: #fff; font-size: 1.85rem; font-weight: 700; margin: 0; letter-spacing: -0.02em; line-height: 1.1; }
+    .app-subtitle { color: rgba(255,255,255,0.78); font-size: 0.88rem; margin: 4px 0 0 0; position: relative; }
+
+    /* THREAT BANNER — replaces tiny situation-callout with a prominent indicator */
+    .threat-banner {
+        display: flex; align-items: center; gap: 20px;
+        padding: 18px 22px; border-radius: 12px; margin-bottom: 1rem;
+        border: 1px solid; position: relative; overflow: hidden;
+    }
+    .threat-banner::before {
+        content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
+    }
+    .threat-extreme { background: linear-gradient(135deg, #2a0f11 0%, #1a0708 100%); border-color: rgba(220,38,38,0.45); }
+    .threat-extreme::before { background: #dc2626; }
+    .threat-high    { background: linear-gradient(135deg, #2a1a0a 0%, #1a1004 100%); border-color: rgba(234,88,12,0.45); }
+    .threat-high::before { background: #ea580c; }
+    .threat-calm    { background: linear-gradient(135deg, #0d1f14 0%, #07140a 100%); border-color: rgba(34,197,94,0.45); }
+    .threat-calm::before { background: #22c55e; }
+    .threat-pulse {
+        width: 16px; height: 16px; border-radius: 50%;
+        flex-shrink: 0; animation: pulse 1.8s infinite;
+    }
+    .threat-extreme .threat-pulse { background: #dc2626; box-shadow: 0 0 0 0 rgba(220,38,38,0.7); }
+    .threat-high    .threat-pulse { background: #ea580c; box-shadow: 0 0 0 0 rgba(234,88,12,0.7); animation-name: pulse-orange; }
+    .threat-calm    .threat-pulse { background: #22c55e; box-shadow: 0 0 0 0 rgba(34,197,94,0.6); animation-name: pulse-green; animation-duration: 3s; }
+    @keyframes pulse {
+        0%   { box-shadow: 0 0 0 0 rgba(220,38,38,0.7); }
+        70%  { box-shadow: 0 0 0 14px rgba(220,38,38,0); }
+        100% { box-shadow: 0 0 0 0 rgba(220,38,38,0); }
+    }
+    @keyframes pulse-orange {
+        0%   { box-shadow: 0 0 0 0 rgba(234,88,12,0.7); }
+        70%  { box-shadow: 0 0 0 14px rgba(234,88,12,0); }
+        100% { box-shadow: 0 0 0 0 rgba(234,88,12,0); }
+    }
+    @keyframes pulse-green {
+        0%   { box-shadow: 0 0 0 0 rgba(34,197,94,0.6); }
+        70%  { box-shadow: 0 0 0 12px rgba(34,197,94,0); }
+        100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+    }
+    .threat-info { display: flex; flex-direction: column; min-width: 130px; }
+    .threat-label { font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #9ca3af; }
+    .threat-value { font-size: 1.5rem; font-weight: 800; line-height: 1.1; margin-top: 2px; }
+    .threat-extreme .threat-value { color: #fca5a5; }
+    .threat-high    .threat-value { color: #fdba74; }
+    .threat-calm    .threat-value { color: #86efac; }
+    .threat-text { flex: 1; font-size: 0.95rem; line-height: 1.5; color: #e5e7eb; font-weight: 500; }
+    .threat-divider { width: 1px; align-self: stretch; background: rgba(255,255,255,0.1); margin: 4px 0; }
+
+    /* METRIC CARDS — taller, with colored top accent stripe */
+    .metric-row { display: flex; gap: 12px; margin-bottom: 1rem; flex-wrap: wrap; }
+    .metric-card {
+        flex: 1 1 140px; padding: 18px 14px 16px;
+        border-radius: 12px; text-align: center;
+        border: 1px solid rgba(255,255,255,0.07);
+        position: relative; overflow: hidden;
+        transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .metric-card::before {
+        content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    }
+    .metric-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.18); box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
+    .metric-card .label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+    .metric-card .value { font-size: 2.1rem; font-weight: 800; line-height: 1.05; }
+    .metric-card .sub   { font-size: 0.7rem; color: #9ca3af; margin-top: 4px; font-weight: 500; }
+    .mc-red    { background: #2a0f11; } .mc-red    .label { color: #f87171; } .mc-red    .value { color: #fca5a5; } .mc-red::before    { background: #dc2626; }
+    .mc-orange { background: #2a1a0a; } .mc-orange .label { color: #fb923c; } .mc-orange .value { color: #fdba74; } .mc-orange::before { background: #ea580c; }
+    .mc-yellow { background: #2a250a; } .mc-yellow .label { color: #facc15; } .mc-yellow .value { color: #fde68a; } .mc-yellow::before { background: #d97706; }
+    .mc-green  { background: #0a1f1f; } .mc-green  .label { color: #2dd4bf; } .mc-green  .value { color: #99f6e4; } .mc-green::before  { background: #0d9488; }
+    .mc-gray   { background: #1a1a1a; } .mc-gray   .label { color: #9ca3af; } .mc-gray   .value { color: #d1d5db; } .mc-gray::before   { background: #6b7280; }
+
+    /* PRIORITY ACTIONS */
     .priority-actions { background: #1a0e05; border: 1px solid rgba(234,88,12,0.4); border-left: 4px solid #ea580c; border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; }
     .priority-actions .pa-head { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #fb923c; margin-bottom: 8px; }
-    .priority-actions .pa-item { font-size: 0.82rem; color: #d1d5db; padding: 4px 0 4px 18px; position: relative; line-height: 1.5; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .priority-actions .pa-item { font-size: 0.82rem; color: #d1d5db; padding: 5px 0 5px 18px; position: relative; line-height: 1.5; border-bottom: 1px solid rgba(255,255,255,0.04); }
     .priority-actions .pa-item:last-child { border-bottom: none; }
     .priority-actions .pa-item::before { content: "→"; position: absolute; left: 0; color: #ea580c; font-weight: 700; }
+
     .bc-ok { background: #0e1f14; border-left: 4px solid #22c55e; border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; }
     .bc-head { font-weight: 600; font-size: 0.92rem; margin-bottom: 6px; color: #86efac; }
     .bc-body { font-size: 0.83rem; line-height: 1.55; color: #d1d5db; }
-    .section-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: #6b7280; margin: 0 0 5px 0; }
+
+    /* SECTION LABELS — bumped contrast from #6b7280 to #9ca3af for WCAG AA */
+    .section-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: #9ca3af; margin: 0 0 6px 0; }
     .cond-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
     .cond-cell { background: rgba(255,255,255,0.04); border-radius: 6px; padding: 7px 10px; }
-    .cond-cell .cl { font-size: 0.66rem; color: #6b7280; }
+    .cond-cell .cl { font-size: 0.66rem; color: #9ca3af; }
     .cond-cell .cv { font-size: 0.95rem; font-weight: 700; }
-    .overall { background: #111827; border-left: 4px solid #38bdf8; border-radius: 0 10px 10px 0; padding: 12px 16px; margin-bottom: 0.8rem; }
-    .overall p { color: #c8d0dc; font-size: 0.85rem; line-height: 1.5; margin: 0; }
+
+    .overall { background: #111827; border-left: 4px solid #38bdf8; border-radius: 0 10px 10px 0; padding: 12px 16px; margin-bottom: 0.9rem; }
+    .overall p { color: #c8d0dc; font-size: 0.85rem; line-height: 1.55; margin: 0; }
     .overall strong { color: #e2e8f0; }
-    .legend { display: flex; gap: 16px; justify-content: center; padding: 6px 0; margin-bottom: 4px; }
-    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; color: #9ca3af; }
-    .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+    /* MAP LEGEND */
+    .legend { display: flex; gap: 18px; justify-content: center; padding: 8px 0 4px; margin-bottom: 6px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: #cbd5e1; }
+    .legend-dot { width: 11px; height: 11px; border-radius: 2px; }
+
+    /* HELP BOX */
     .help-box .risk-row { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.83rem; color: #d1d5db; line-height: 1.6; }
     .help-box .risk-badge { font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; min-width: 70px; text-align: center; white-space: nowrap; }
+
+    /* HIDE STREAMLIT CHROME */
     #MainMenu {display: none;} footer {display: none;}
-    .block-container h4 { font-size: 1.15rem !important; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 0.6rem; }
-    div[data-testid="stButton"] > button { border-radius: 8px !important; }
+
+    /* SECTION HEADINGS */
+    .block-container h4 { font-size: 1.15rem !important; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.08); margin: 0 0 0.7rem 0 !important; }
+
+    /* BUTTONS — better hover affordance */
+    div[data-testid="stButton"] > button {
+        border-radius: 8px !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        background: rgba(255,255,255,0.03) !important;
+        color: #e2e8f0 !important;
+        font-weight: 500 !important;
+        transition: all 0.15s ease !important;
+    }
+    div[data-testid="stButton"] > button:hover {
+        border-color: rgba(220,38,38,0.5) !important;
+        background: rgba(220,38,38,0.08) !important;
+        color: #fff !important;
+    }
+    div[data-testid="stDownloadButton"] > button {
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+    }
+
+    /* SIDEBAR */
     [data-testid="stSidebar"] { background: #0d1117; }
     section[data-testid="stSidebar"] { min-width: 280px !important; }
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p { font-size: 0.85rem; }
+
+    /* CHAT MESSAGES — slightly more padding */
+    [data-testid="stChatMessage"] { padding: 0.6rem 0.8rem; }
+
+    /* RESPONSIVE — stack columns on narrow viewports */
+    @media (max-width: 900px) {
+        [data-testid="stHorizontalBlock"] { flex-wrap: wrap !important; }
+        [data-testid="stHorizontalBlock"] > [data-testid="column"] {
+            flex: 1 1 100% !important;
+            width: 100% !important;
+            min-width: 100% !important;
+        }
+        .app-title { font-size: 1.25rem; }
+        .metric-card .value { font-size: 1.4rem; }
+        .block-container { padding-left: 0.6rem; padding-right: 0.6rem; }
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -336,23 +459,27 @@ with st.sidebar:
     n_none = int((predictions['risk_level'] == 'NONE').sum())      if 'risk_level' in predictions.columns else 0
 
     st.divider()
-    st.markdown(f"**Forecast date:** {forecast_date}")
-    st.markdown(f"**Zones assessed:** {len(predictions):,}")
-    st.markdown(f"**Zones at elevated risk:** {n_vh + n_h:,}")
-    st.markdown(f"**Active risk areas:** {len(clusters)}")
+    _s1, _s2 = st.columns(2)
+    _s1.metric("Zones assessed", f"{len(predictions):,}")
+    _s2.metric("Elevated risk", f"{n_vh + n_h:,}", help="Extreme + Very High zones")
+    _s3, _s4 = st.columns(2)
+    _s3.metric("Active areas", f"{len(clusters)}")
+    _s4.metric("Forecast", forecast_date.split('-', 1)[1] if '-' in str(forecast_date) else str(forecast_date),
+               help=f"Full date: {forecast_date}")
     st.divider()
 
-    st.markdown("**Display on map:**")
+    st.markdown("**Display on map**")
     _level_opts = [
-        ('VERY_HIGH', 'Extreme',   True),
-        ('HIGH',      'Very High', True),
-        ('MODERATE',  'High',      True),
-        ('LOW',       'Moderate',  True),
-        ('NONE',      'Low',       False),
+        ('VERY_HIGH', 'Extreme',   n_vh,   True),
+        ('HIGH',      'Very High', n_h,    True),
+        ('MODERATE',  'High',      n_m,    True),
+        ('LOW',       'Moderate',  n_l,    True),
+        ('NONE',      'Low',       n_none, False),
     ]
-    show_levels = [code for code, lbl, default in _level_opts
-                   if st.checkbox(lbl, value=default, key=f"cb_{code}")]
-    map_opacity  = st.slider("Opacity", 0.3, 1.0, 0.8, 0.05)
+    show_levels = [code for code, lbl, cnt, default in _level_opts
+                   if st.checkbox(f"{lbl}  ·  {cnt:,}", value=default, key=f"cb_{code}")]
+    map_opacity  = st.slider("Opacity", 0.3, 1.0, 0.8, 0.05,
+                              help="Hex layer transparency")
     st.divider()
 
     groq_key = st.secrets.get("GROQ_API_KEY", "")
@@ -384,7 +511,10 @@ cluster_stats_by_label = {c['label']: c for c in clusters}
 # ── HEADER ──
 st.markdown(
     f'<div class="app-header">'
-    f'<p class="app-title">WildfireWatch AI</p>'
+    f'<div class="app-title-row">'
+    f'<span class="app-icon">🔥</span>'
+    f'<h1 class="app-title">WildfireWatch AI</h1>'
+    f'</div>'
     f'<p class="app-subtitle">14-Day Wildfire Risk Forecast · California · {forecast_date}</p>'
     f'</div>',
     unsafe_allow_html=True
@@ -396,23 +526,37 @@ top_regions = [c.get('region', '') for c in active_clusters[:2] if c.get('region
 regions_str = ' and '.join(top_regions) if top_regions else 'multiple regions'
 
 if n_vh > 0 and active_clusters:
-    situation_text = (
+    threat_class = "threat-extreme"
+    threat_value = "EXTREME"
+    threat_text = (
         f"{len(active_clusters)} active risk area{'s' if len(active_clusters) != 1 else ''} "
         f"requiring immediate attention \u2014 {n_vh:,} zones at Extreme risk, "
         f"concentrated in {regions_str}."
     )
-    callout_class = "situation-callout"
 elif n_h > 0 and active_clusters:
-    situation_text = (
+    threat_class = "threat-high"
+    threat_value = "ELEVATED"
+    threat_text = (
         f"{len(active_clusters)} area{'s' if len(active_clusters) != 1 else ''} at elevated risk \u2014 "
         f"{n_h:,} zones at Very High risk across {regions_str}."
     )
-    callout_class = "situation-callout"
 else:
-    situation_text = "No Extreme or Very High risk zones detected. Statewide conditions are within normal range."
-    callout_class = "situation-callout calm"
+    threat_class = "threat-calm"
+    threat_value = "NORMAL"
+    threat_text = "No Extreme or Very High risk zones detected. Statewide conditions are within normal range."
 
-st.markdown(f'<div class="{callout_class}"><p>{situation_text}</p></div>', unsafe_allow_html=True)
+st.markdown(
+    f'<div class="threat-banner {threat_class}">'
+    f'<div class="threat-pulse"></div>'
+    f'<div class="threat-info">'
+    f'<div class="threat-label">Current Threat Level</div>'
+    f'<div class="threat-value">{threat_value}</div>'
+    f'</div>'
+    f'<div class="threat-divider"></div>'
+    f'<div class="threat-text">{threat_text}</div>'
+    f'</div>',
+    unsafe_allow_html=True
+)
 
 # ── METRIC CARDS ──
 st.markdown(f"""
@@ -443,7 +587,7 @@ hex_layer = pdk.Layer(
 
 _drivers_html = """
   <div style="border-top:1px solid #1f2937;padding-top:8px;margin-bottom:8px;">
-    <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#4b5563;margin-bottom:4px;">Key Risk Factors</div>
+    <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#9ca3af;margin-bottom:4px;">Key Risk Factors</div>
     <div style="font-size:11px;color:#d1d5db;line-height:1.6;">{key_factors}</div>
   </div>""" if has_drivers else ""
 
@@ -453,7 +597,7 @@ tooltip = {
   <div style="font-size:1.1rem;font-weight:800;color:{{risk_color_hex}};margin-bottom:2px;">{{risk_level_display}}</div>
   <div style="font-size:1.5rem;font-weight:700;color:#f1f5f9;margin-bottom:10px;">{{fire_risk_pct}} fire risk</div>
   {_drivers_html}
-  <div style="border-top:1px solid #1f2937;padding-top:6px;font-size:10px;color:#374151;">Zone: {{hex_id}}</div>
+  <div style="border-top:1px solid #1f2937;padding-top:6px;font-size:10px;color:#6b7280;">Zone: {{hex_id}}</div>
 </div>""",
     "style": {"backgroundColor": "#111827", "color": "#e5e7eb", "borderRadius": "8px", "padding": "0"}
 }
@@ -465,7 +609,7 @@ st.pydeck_chart(
         initial_view_state=pdk.ViewState(latitude=37.5, longitude=-119.5, zoom=5.8, pitch=0),
         tooltip=tooltip, map_style=CARTO_DARK,
     ),
-    use_container_width=True, height=600,
+    use_container_width=True, height=720,
 )
 st.markdown(
     '<div class="legend">'
@@ -599,8 +743,8 @@ with brief_col:
                     if len(unique_drivers) >= 4:
                         break
                 factors_html = ''.join(
-                    f'<div style="font-size:0.78rem;color:#9ca3af;padding:2px 0 2px 16px;position:relative;">'
-                    f'<span style="position:absolute;left:0;color:#4b5563;">·</span>{d}</div>'
+                    f'<div style="font-size:0.78rem;color:#cbd5e1;padding:3px 0 3px 16px;position:relative;">'
+                    f'<span style="position:absolute;left:0;color:#9ca3af;">·</span>{d}</div>'
                     for d in unique_drivers
                 )
                 inner += (
@@ -620,8 +764,13 @@ with brief_col:
     )
 
 with chat_col:
-    st.markdown("#### Ask a Question")
-    st.caption("Ask questions about current fire risk")
+    ch_left, ch_right = st.columns([2, 1])
+    ch_left.markdown("#### Ask a Question")
+    ch_left.caption("Powered by AI · grounded in forecast data")
+    if ch_right.button("Clear chat", use_container_width=True, key="clear_chat",
+                        disabled=len(st.session_state.messages) <= 1):
+        st.session_state.messages = [{"role": "assistant", "content": "Ask me about current fire risk, evacuation planning, or resource staging for any region."}]
+        st.rerun()
 
     chat_container = st.container(height=400)
     with chat_container:
