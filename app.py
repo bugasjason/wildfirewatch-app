@@ -423,14 +423,14 @@ with st.sidebar:
     st.divider()
 
     _date_options = [e['date'] for e in date_index]
+    if 'forecast_date' not in st.session_state:
+        st.session_state['forecast_date'] = _default_date
     selected_date = st.selectbox(
         "Forecast date",
         _date_options,
-        index=_default_idx,
         format_func=lambda d: format_date_label(next(e for e in date_index if e['date'] == d)),
         key='forecast_date',
     )
-    selected_entry = next(e for e in date_index if e['date'] == selected_date)
 
     if 'current_date' not in st.session_state or st.session_state.current_date != selected_date:
         st.session_state.messages = [{"role": "assistant", "content": "Ask me about current fire risk, evacuation planning, or resource staging for any region."}]
