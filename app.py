@@ -85,6 +85,17 @@ RISK_COLOR_HEX = {
     'NO_DATA':   '#1e2330',
 }
 
+# Distinct bright border colors for up to 7 simultaneous clusters
+CLUSTER_BORDER_COLORS = [
+    [255, 255, 255, 230],   # 1 – white
+    [255, 230,  50, 220],   # 2 – yellow
+    [ 50, 220, 255, 220],   # 3 – cyan
+    [255, 100, 180, 220],   # 4 – pink
+    [ 80, 255, 120, 220],   # 5 – green
+    [255, 160,  50, 220],   # 6 – amber
+    [180,  80, 255, 220],   # 7 – violet
+]
+
 # Plain-English overrides for raw feature names shown to users
 PLAIN_ENGLISH = {
     'centroid_lat':           'geographic location',
@@ -330,7 +341,7 @@ def prep_date_data(date_str):
 
     ca_base = load_ca_base()
     merge_cols = [c for c in
-                  ['hex_id', 'predicted_probability', 'risk_level']
+                  ['hex_id', 'predicted_probability', 'risk_level', 'lat', 'lon']
                   + driver_feat_cols[:3] + driver_shap_cols[:3]
                   if c in predictions.columns]
     map_data = ca_base.merge(predictions[merge_cols], on='hex_id', how='left')
@@ -342,6 +353,48 @@ def prep_date_data(date_str):
     map_data['key_factors']           = map_data.apply(build_key_factors, axis=1)
     map_data['color']                 = map_data['risk_level'].apply(
         lambda lvl: [30, 35, 45, 35] if lvl == 'NO_DATA' else risk_to_color(lvl))
+
+    # ── CLUSTER ASSIGNMENT ──
+    # Assign each HIGH/VERY_HIGH zone to its nearest cluster using an
+    # adaptive radius (larger clusters have a wider capture radius).
+    map_data['cluster_label']         = None
+    map_data['cluster_num']           = None
+    map_data['cluster_name']          = None
+    map_data['cluster_outline_color'] = None
+    map_data['cluster_tooltip_line']  = ''
+
+    if clusters and 'lat' in map_data.columns:
+        cluster_info = [
+            (i + 1, c['label'], c['region'],
+             c['center_lat'], c['center_lon'],
+             0.12 * math.sqrt(c.get('n_hexes', 10)) + 0.3)   # adaptive threshold
+            for i, c in enumerate(clusters)
+        ]
+        elevated_idx = map_data.index[
+            map_data['risk_level'].isin(['VERY_HIGH', 'HIGH']) &
+            map_data['lat'].notna()
+        ]
+        for idx in elevated_idx:
+            row = map_data.loc[idx]
+            best_dist, best = float('inf'), None
+            for num, label, region, clat, clon, threshold in cluster_info:
+                d = math.sqrt((row['lat'] - clat) ** 2 + (row['lon'] - clon) ** 2)
+                if d < best_dist:
+                    best_dist, best = d, (num, label, region, threshold)
+            if best and best_dist < best[3]:
+                num, label, region, _ = best
+                color = CLUSTER_BORDER_COLORS[(num - 1) % len(CLUSTER_BORDER_COLORS)]
+                name  = f"#{num} Priority — {region}"
+                sev   = RISK_DISPLAY.get(row['risk_level'], row['risk_level'])
+                map_data.at[idx, 'cluster_label']         = label
+                map_data.at[idx, 'cluster_num']           = num
+                map_data.at[idx, 'cluster_name']          = name
+                map_data.at[idx, 'cluster_outline_color'] = color
+                map_data.at[idx, 'cluster_tooltip_line']  = (
+                    f'<div style="border-top:1px solid #374151;padding-top:6px;'
+                    f'margin-top:6px;font-size:11px;color:#9ca3af;">'
+                    f'Part of: {name} ({sev})</div>'
+                )
 
     return (predictions, clusters, briefing, chatbot_ctx,
             driver_feat_cols, driver_shap_cols, forecast_date,
@@ -524,12 +577,29 @@ base_layer = pdk.Layer(
     get_hexagon="hex_id", get_fill_color="color",
     opacity=0.5, pickable=False, auto_highlight=False,
 )
-# Risk layer: only selected levels; NONE zones never rendered
+# Risk layer: only selected levels
 filtered = map_data[map_data['risk_level'].isin(show_levels)]
 hex_layer = pdk.Layer(
     "H3HexagonLayer",
     data=filtered, get_hexagon="hex_id", get_fill_color="color",
     opacity=map_opacity, pickable=True, auto_highlight=True,
+)
+# Cluster outline layer: stroke-only borders for cluster member zones
+cluster_zones = map_data[
+    map_data['cluster_label'].notna() &
+    map_data['risk_level'].isin(show_levels)
+].copy()
+cluster_layer = pdk.Layer(
+    "H3HexagonLayer",
+    data=cluster_zones,
+    get_hexagon="hex_id",
+    get_line_color="cluster_outline_color",
+    filled=False,
+    stroked=True,
+    line_width_min_pixels=2,
+    opacity=1.0,
+    pickable=False,
+    auto_highlight=False,
 )
 
 _drivers_html = """
@@ -544,6 +614,7 @@ tooltip = {
   <div style="font-size:1.1rem;font-weight:800;color:{{risk_color_hex}};margin-bottom:2px;">{{risk_level_display}}</div>
   <div style="font-size:1.5rem;font-weight:700;color:#f1f5f9;margin-bottom:10px;">{{fire_risk_pct}} fire risk</div>
   {_drivers_html}
+  {{cluster_tooltip_line}}
   <div style="border-top:1px solid #1f2937;padding-top:6px;font-size:10px;color:#374151;">Zone: {{hex_id}}</div>
 </div>""",
     "style": {"backgroundColor": "#111827", "color": "#e5e7eb", "borderRadius": "8px", "padding": "0"}
@@ -552,7 +623,7 @@ tooltip = {
 CARTO_DARK = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
 st.pydeck_chart(
     pdk.Deck(
-        layers=[base_layer, hex_layer],
+        layers=[base_layer, hex_layer, cluster_layer],
         initial_view_state=pdk.ViewState(latitude=37.5, longitude=-119.5, zoom=5.8, pitch=0),
         tooltip=tooltip, map_style=CARTO_DARK,
     ),
