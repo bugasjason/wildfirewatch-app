@@ -176,6 +176,30 @@ CITY_COORDS = {
     'South Lake Tahoe': (38.94, -119.98),
 }
 
+CA_LANDMARKS = {
+    'San Gabriel Mountains':    (34.35, -117.85),
+    'San Bernardino Mountains': (34.25, -117.05),
+    'NE Los Angeles County':    (34.20, -118.05),
+    'Santa Barbara':            (34.42, -119.70),
+    'Santa Barbara / Ventura':  (34.40, -119.20),
+    'Ventura':                  (34.25, -119.00),
+    'Shasta-Trinity Region':    (40.70, -122.60),
+    'Butte County':             (39.70, -121.80),
+    'Butte County / Paradise':  (39.80, -121.60),
+    'Lake Tahoe / El Dorado':   (38.90, -120.00),
+    'Sequoia National Forest':  (36.50, -118.70),
+    'Riverside / San Jacinto':  (33.75, -116.80),
+    'San Diego':                (32.85, -116.65),
+}
+
+def nearest_landmark(lat, lon):
+    best_name, best_dist = None, float('inf')
+    for name, (clat, clon) in CA_LANDMARKS.items():
+        d = math.sqrt((lat - clat) ** 2 + (lon - clon) ** 2)
+        if d < best_dist:
+            best_dist, best_name = d, name
+    return best_name or 'Unknown'
+
 def translate_feature(feat):
     return PLAIN_ENGLISH.get(feat, feat.replace('_', ' '))
 
@@ -396,6 +420,14 @@ def prep_date_data(date_str):
                     f'Part of: {name} ({sev})</div>'
                 )
 
+    # ── REGION ASSIGNMENT — every zone gets a nearest named landmark region ──
+    map_data['region'] = 'Unknown'
+    has_latlon = map_data['lat'].notna() & map_data['lon'].notna()
+    if has_latlon.any():
+        map_data.loc[has_latlon, 'region'] = map_data.loc[has_latlon].apply(
+            lambda r: nearest_landmark(r['lat'], r['lon']), axis=1
+        )
+
     return (predictions, clusters, briefing, chatbot_ctx,
             driver_feat_cols, driver_shap_cols, forecast_date,
             n_vh, n_h, n_m, n_l, n_none, map_data)
@@ -611,11 +643,12 @@ _drivers_html = """
 tooltip = {
     "html": f"""
 <div style="font-family:DM Sans,sans-serif;padding:13px 15px;min-width:210px;">
-  <div style="font-size:1.1rem;font-weight:800;color:{{risk_color_hex}};margin-bottom:2px;">{{risk_level_display}}</div>
-  <div style="font-size:1.5rem;font-weight:700;color:#f1f5f9;margin-bottom:10px;">{{fire_risk_pct}} fire risk</div>
-  {_drivers_html}
+  <div style="font-size:1.5rem;font-weight:700;color:#f1f5f9;margin-bottom:2px;">Fire Risk: {{fire_risk_pct}}</div>
+  <div style="font-size:1.0rem;font-weight:700;color:{{risk_color_hex}};margin-bottom:8px;">Risk Level: {{risk_level_display}}</div>
+  <div style="font-size:11px;color:#9ca3af;margin-bottom:4px;">Region: {{region}}</div>
   {{cluster_tooltip_line}}
-  <div style="border-top:1px solid #1f2937;padding-top:6px;font-size:10px;color:#374151;">Zone: {{hex_id}}</div>
+  {_drivers_html}
+  <div style="border-top:1px solid #1f2937;padding-top:6px;font-size:10px;color:#374151;">Zone ID: {{hex_id}}</div>
 </div>""",
     "style": {"backgroundColor": "#111827", "color": "#e5e7eb", "borderRadius": "8px", "padding": "0"}
 }
