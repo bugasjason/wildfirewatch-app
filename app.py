@@ -61,6 +61,7 @@ st.markdown("""
     div[data-testid="stButton"] > button { border-radius: 8px !important; }
     [data-testid="stSidebar"] { background: #0d1117; }
     section[data-testid="stSidebar"] { min-width: 280px !important; }
+    [data-testid="stSelectbox"] input { pointer-events: none !important; caret-color: transparent !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -425,7 +426,7 @@ with st.sidebar:
     _date_options = [e['date'] for e in date_index]
     if 'forecast_date' not in st.session_state:
         st.session_state['forecast_date'] = _default_date
-    selected_date = st.selectbox(
+    selected_date = st.radio(
         "Forecast date",
         _date_options,
         format_func=lambda d: format_date_label(next(e for e in date_index if e['date'] == d)),
